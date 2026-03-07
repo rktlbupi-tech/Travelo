@@ -1,0 +1,141 @@
+
+/*-----------------------------------------------------------------------------------
+
+    Template Name: Gowilds - Tours and Travel HTML Template
+    Template URI: site.com
+    Description: Gowilds is a modern Adventure Tours and Travel HTML Template designed for all activities, sports, hiking, or outdoor adventures.
+    Author: WebTend 
+    Author URI: https://webtend.net/
+    Version: 1.0
+
+--------------------------
+    CSS INDEX
+--------------------------
+
+    01. Common css 
+    02. Header css
+    03. Hero css
+    04. About css
+    05. Elements css
+    06. Features css
+    07. Services css
+    08. Activity css
+    09. We css
+    10. Gallery css
+    11. Booking css
+    12. Places css
+    13. Testimonial css
+    14. Shop css
+    15. Blog css
+    16. Contact css
+    17. Footer css
+    18. Sliders css
+    19. Wrapper css
+    
+-----------------------------------------------------------------------------------*/
+        .card {
+            border-radius: 10px;
+        }
+
+        .card-header {
+            padding: 12px 18px;
+            font-size: 15px;
+        }
+
+        .card-body {
+            padding: 20px 20px;
+        }
+
+        /* Airline Logo */
+        .card img {
+            border-radius: 6px;
+        }
+
+        /* Timing Text */
+        .card h6 {
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        /* Muted Line */
+        .card small.text-muted {
+            font-size: 13px;
+        }
+
+        /* Badges */
+        .badge {
+            font-size: 12px;
+            padding: 6px 10px;
+            border-radius: 5px;
+        }
+
+        .badge.bg-warning {
+            background-color: #ffdd57 !important;
+            color: #000 !important;
+        }
+
+        /* Price Styling */
+        .card-header span.float-end,
+        .card-header span.text-danger {
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        hr {
+            opacity: .15;
+            margin: 15px 0;
+        }
+
+        .form-select-sm {
+            padding: 3px 4px;
+            font-size: 13px;
+        }
+
+        .btn-link {
+            font-size: 14px;
+        }
+
+        .badge.bg-primary,
+        .badge.bg-secondary {
+            padding: 6px 14px !important;
+        }
+		
+		.card.selected {
+		background-color: #d4f8d4 !important;
+		border: 2px solid #3cb043;
+	}
+	
+	.offcanvas{width:fit-content!important;}
+	
+
+/* Initial hidden position */
+.offcanvas.offcanvas-end {
+    opacity: 0;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+/* When Bootstrap starts opening (remove delay) */
+.offcanvas.offcanvas-end.showing {
+    opacity: 1 !important;
+    transform: translateX(0) !important;
+}
+
+/* When fully open */
+.offcanvas.offcanvas-end.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.offcanvas-backdrop {
+    
+    background-color: transparent!important;
+}
+
+.bhigh{background-color:#009e49;}
+
+.offcanvas {
+    position: fixed;
+    bottom: 0;
+    z-index: 9999!important;
+}
