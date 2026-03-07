@@ -294,7 +294,7 @@
                 <div class="row justify-content-center">
                     <div class="col-lg-10">
                         <div class="contact-area wow fadeInUp">
-                            <form class="contact-form" action="submit.php" method="POST">
+                            <form id="contactForm" class="contact-form" action="submit.php" method="POST">
                                 <input type="hidden" name="form_type" value="contact">
                                 <div class="row">
                                     <div class="col-lg-6">
@@ -549,5 +549,51 @@
         <script src="assets/vendor/wow.min.js"></script>
         <!--====== Main js ======-->
         <script src="assets/js/theme.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            Swal.fire({
+                title: 'Sending Message...',
+                text: 'Please wait.',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            fetch('submit.php', {
+                method: 'POST',
+                body: new FormData(this)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Sent!',
+                        text: data.message,
+                        confirmButtonColor: '#133a25'
+                    }).then(() => {
+                        document.getElementById('contactForm').reset();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: data.message
+                    });
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'System Error',
+                    text: 'Something went wrong. Please try again later.'
+                });
+            });
+        });
+        </script>
     </body>
 </html>

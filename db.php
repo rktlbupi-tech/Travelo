@@ -82,11 +82,37 @@ $table_admin = "CREATE TABLE IF NOT EXISTS admins (
 )";
 $conn->query($table_admin);
 
+$table_app_hotels = "CREATE TABLE IF NOT EXISTS app_hotels (
+    id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    location VARCHAR(100),
+    price VARCHAR(50),
+    accommodations VARCHAR(50),
+    image VARCHAR(255),
+    description TEXT,
+    availability TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)";
+$conn->query($table_app_hotels);
+
 // Seed admin data (username: admin, password: password123)
 $admin_check = $conn->query("SELECT * FROM admins WHERE username='admin'");
 if ($admin_check->num_rows == 0) {
     $hashed_password = password_hash('password123', PASSWORD_DEFAULT);
     $conn->query("INSERT INTO admins (username, password) VALUES ('admin', '$hashed_password')");
+}
+
+// Seed hotel data
+$hotel_check = $conn->query("SELECT * FROM app_hotels");
+if ($hotel_check->num_rows == 0) {
+    $seed_hotels = [
+        "('Grand Luxury Resort', 'Mumbai', '5000', 'Classic Tent', 'assets/images/tour-3-550x590.jpg', 'Experience the best luxury tent stay.', 1)",
+        "('Forest Retreat', 'Bangalore', '3000', 'Forest Camping', 'assets/images/tour-4-550x590.jpg', 'A wonderful retreat in the heart of the forest.', 1)",
+        "('Mountain View', 'Manali', '4500', 'Tree House Tent', 'assets/images/tour-12-550x590.jpg', 'Beautiful mountain views from your tree house.', 1)",
+    ];
+    foreach ($seed_hotels as $hotel_values) {
+        $conn->query("INSERT INTO app_hotels (name, location, price, accommodations, image, description, availability) VALUES $hotel_values");
+    }
 }
 
 ?>

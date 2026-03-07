@@ -344,106 +344,114 @@
 							  </div>
 							</div>
 
-							<!-- PICKUP TYPE -->
-							<div class="col-md-3" id="pickupTypeWrapper">
-								<label class="fw-semibold">Pickup</label>
-								<select class="wide" name="pickup">                               
-									<option value="Airport Pickup">Airport Pickup</option>
-									<option value="Airport Drop">Airport Drop</option>              
-								</select>
-							</div>				 
-							<!-- FROM -->
-							<div class="col-md-3" id="fromWrapper">
-							  <label class="fw-semibold">From</label>
-							  <div class="cab-wrapper">
-								<input type="text" name="from" class="form-control cab-input" placeholder="Pick-up city">
-								<div class="cab-display"></div>
-								<div class="dropdown-menu cab-dropdown"></div>
-							  </div>
-							</div>
-
-							<!-- TO -->
-							<div class="col-md-3" id="toWrapper">
-							  <label class="fw-semibold">To</label>
-							  <div class="cab-wrapper">
-								<input type="text" name="to" class="form-control cab-input" placeholder="Drop city">
-								<div class="cab-display"></div>
-								<div class="dropdown-menu cab-dropdown"></div>
-							  </div>
-							</div>
-
-							<!-- PICKUP DATE & TIME -->
-							<div class="col-md-3 position-relative" id="pickupWrapper">
-							  <label class="fw-semibold">Pick-Up Date & Time</label>
-							  <div class="form-control cursor-pointer" id="pickupTrigger">
-								<span id="pickupDate">Select Date</span><br>
-								<small class="text-muted" id="pickupTime">Select Time</small>
-							  </div>
-
-							  <div class="dropdown-menu p-3 shadow" id="pickupDropdown" style="width:260px">
-								<label>Date</label>
-								<input type="date" class="form-control mb-2" id="pickupDateInput">
-								<label>Time</label>
-								<div class="input-group mb-2">
-								  <input type="number" class="form-control" id="hourInput" min="1" max="12" placeholder="HH">
-								  <span class="input-group-text">:</span>
-								  <input type="number" class="form-control" id="minuteInput" min="0" max="59" placeholder="MM">
-								  <select class="form-select" id="ampmSelect">
-									<option>AM</option>
-									<option>PM</option>
-								  </select>
+							<div class="row g-2 align-items-end"> <!-- Added g-2 and align-items-end -->
+							
+								<!-- PICKUP TYPE -->
+								<div class="col-md-1 px-1" style="min-width: 130px;" id="pickupTypeWrapper">
+									<label class="fw-semibold small">Type</label>
+									<select class="wide" name="pickup">                               
+										<option value="Airport Pickup">Airport Pickup</option>
+										<option value="Airport Drop">Airport Drop</option>              
+									</select>
+								</div>				 
+								<!-- FROM -->
+								<div class="col-md-2 px-1" id="fromWrapper">
+								  <label class="fw-semibold small">From</label>
+								  <div class="cab-wrapper">
+									<input type="text" name="from" class="form-control cab-input" placeholder="Pick-up city">
+									<div class="cab-display"></div>
+									<div class="dropdown-menu cab-dropdown"></div>
+								  </div>
 								</div>
-								<button type="button" class="btn btn-primary w-100" id="pickupSetBtn">Set</button>
-							  </div>
-							</div>
 
-							<!-- RETURN DATE & TIME -->
-							<div class="col-md-3 position-relative d-none" id="returnWrapper">
-							  <label class="fw-semibold">Return Date & Time</label>
-							  <div class="form-control cursor-pointer" id="returnTrigger">
-								<span id="returnDate">Select Date</span><br>
-								<small class="text-muted" id="returnTime">Select Time</small>
-							  </div>
-
-							  <div class="dropdown-menu p-3 shadow" id="returnDropdown" style="width:260px">
-								<label>Date</label>
-								<input type="date" class="form-control mb-2" id="returnDateInput">
-								<label>Time</label>
-								<div class="input-group mb-2">
-								  <input type="number" class="form-control" id="returnHourInput" min="1" max="12" placeholder="HH">
-								  <span class="input-group-text">:</span>
-								  <input type="number" class="form-control" id="returnMinuteInput" min="0" max="59" placeholder="MM">
-								  <select class="form-select" id="returnAmpmSelect">
-									<option>AM</option>
-									<option>PM</option>
-								  </select>
+								<!-- TO -->
+								<div class="col-md-2 px-1" id="toWrapper">
+								  <label class="fw-semibold small">To</label>
+								  <div class="cab-wrapper">
+									<input type="text" name="to" class="form-control cab-input" placeholder="Drop city">
+									<div class="cab-display"></div>
+									<div class="dropdown-menu cab-dropdown"></div>
+								  </div>
 								</div>
-								<button type="button" class="btn btn-primary w-100" id="returnSetBtn">Set</button>
-							  </div>
-							</div>
 
-							<!-- HOURLY -->
-							<div class="col-md-3 d-none" id="hourlyWrapper">
-								<label class="fw-semibold">Rent for Hours</label>
-								<select class="wide" name="hours">                               
-									<option value="">Select Hours</option>
-									<option value="2 Hours">2 Hours</option>
-									<option value="4 Hours">4 Hours</option> 
-									<option value="6 Hours">6 Hours</option> 
-									<option value="8 Hours">8 Hours</option> 
-							 									
-								</select>
-							</div>
-							<!-- SEARCH BUTTON -->
-							<div class="col-md-2">
-								<div class="d-grid">
+								<!-- PICKUP DATE & TIME -->
+								<div class="col-md-1 px-1" style="min-width: 130px;" id="pickupWrapper">
+								  <label class="fw-semibold small">Pick-Up</label>
+								  <div class="form-control cursor-pointer py-1 px-2" id="pickupTrigger" style="height: 48px; font-size: 13px; line-height: 1.2;">
+									<span id="pickupDate" class="fw-bold">Date</span><br>
+									<small class="text-muted" id="pickupTime">Time</small>
+								  </div>
+
+								  <div class="dropdown-menu p-3 shadow" id="pickupDropdown" style="width:260px">
+									<label>Date</label>
+									<input type="date" class="form-control mb-2" id="pickupDateInput">
+									<label>Time</label>
+									<div class="input-group mb-2">
+									  <input type="number" class="form-control" id="hourInput" min="1" max="12" placeholder="HH">
+									  <span class="input-group-text">:</span>
+									  <input type="number" class="form-control" id="minuteInput" min="0" max="59" placeholder="MM">
+									  <select class="form-select" id="ampmSelect">
+										<option>AM</option>
+										<option>PM</option>
+									  </select>
+									</div>
+									<button type="button" class="btn btn-primary w-100" id="pickupSetBtn">Set</button>
+								  </div>
+								</div>
+
+								<!-- RETURN DATE & TIME -->
+								<div class="col-md-1 px-1 position-relative d-none" id="returnWrapper" style="min-width: 130px;">
+								  <label class="fw-semibold small">Return</label>
+								  <div class="form-control cursor-pointer py-1 px-2" id="returnTrigger" style="height: 48px; font-size: 13px; line-height: 1.2;">
+									<span id="returnDate" class="fw-bold">Date</span><br>
+									<small class="text-muted" id="returnTime">Time</small>
+								  </div>
+
+								  <div class="dropdown-menu p-3 shadow" id="returnDropdown" style="width:260px">
+									<label>Date</label>
+									<input type="date" class="form-control mb-2" id="returnDateInput">
+									<label>Time</label>
+									<div class="input-group mb-2">
+									  <input type="number" class="form-control" id="returnHourInput" min="1" max="12" placeholder="HH">
+									  <span class="input-group-text">:</span>
+									  <input type="number" class="form-control" id="returnMinuteInput" min="0" max="59" placeholder="MM">
+									  <select class="form-select" id="returnAmpmSelect">
+										<option>AM</option>
+										<option>PM</option>
+									  </select>
+								    </div>
+									<button type="button" class="btn btn-primary w-100" id="returnSetBtn">Set</button>
+								  </div>
+								</div>
+
+								<!-- HOURLY -->
+								<div class="col-md-1 px-1 d-none" id="hourlyWrapper" style="min-width: 110px;">
+									<label class="fw-semibold small">Hours</label>
+									<select class="wide" name="hours">                               
+										<option value="">Select</option>
+										<option value="2 Hours">2 Hours</option>
+										<option value="4 Hours">4 Hours</option> 
+										<option value="6 Hours">6 Hours</option> 
+										<option value="8 Hours">8 Hours</option> 
+									</select>
+								</div>
+								
+								<!-- PHONE NUMBER -->
+								<div class="col-md-2 px-1">
+									<label class="fw-semibold small">Phone</label>
+									<input type="tel" name="phone" class="form-control cab-input" placeholder="Phone" required>
+								</div>
+
+								<!-- SUBMIT -->
+								<div class="col-md-1 px-1">
                                     <input type="hidden" name="pickup_date" id="hiddenPickupDate">
                                     <input type="hidden" name="pickup_time" id="hiddenPickupTime">
                                     <input type="hidden" name="return_date" id="hiddenReturnDate">
                                     <input type="hidden" name="return_time" id="hiddenReturnTime">
-									<button type="submit" class="main-btn city-input secondary-btn text-light">Submit</button>                                     
+									<button type="submit" class="main-btn city-input secondary-btn text-light p-0" style="height: 48px; width: 100%; border-radius: 6px; font-size: 14px;">Submit</button>
 								</div>
-							</div>
+
+						  </div> <!-- End Row -->
 
 						  </div>
 					</form>
@@ -833,14 +841,56 @@ document.getElementById('cabSearchForm').addEventListener('submit', function(e) 
   const tripType = formData.get('tripType');
   const from = formData.get('from');
   const to = formData.get('to');
+  const pickupDate = formData.get('pickup_date');
+  const pickupTime = formData.get('pickup_time');
+  const returnDate = formData.get('return_date');
+  const hours = formData.get('hours');
   
-  if (tripType !== 'Hourly' && from && to && from === to) {
+  if (tripType !== 'Hourly' && from && to && from.trim() === to.trim()) {
       Swal.fire({
           icon: 'error',
           title: 'Invalid Selection',
           text: 'Pickup and drop regions cannot be the same!'
       });
       return;
+  }
+
+  // Ensure 'from' is filled
+  if (!from || from.trim() === '') {
+      Swal.fire({ icon: 'error', title: 'Missing Field', text: 'Please select a pickup location.' });
+      return;
+  }
+
+  // Ensure pickup date and time are set
+  if (!pickupDate || !pickupTime) {
+      Swal.fire({ icon: 'error', title: 'Missing Field', text: 'Please select a pickup date and time.' });
+      return;
+  }
+
+  if (tripType === 'Transfer') {
+      // no additional checks needed for to? wait, maybe TO is required
+      if (!to || to.trim() === '') {
+          Swal.fire({ icon: 'error', title: 'Missing Field', text: 'Please select a drop location.' });
+          return;
+      }
+  } else if (tripType === 'Outstation') {
+      if (!to || to.trim() === '') {
+          Swal.fire({ icon: 'error', title: 'Missing Field', text: 'Please select a drop location.' });
+          return;
+      }
+      if (!returnDate) {
+          Swal.fire({ icon: 'error', title: 'Missing Field', text: 'Please select a return date and time for Outstation.' });
+          return;
+      }
+      if (new Date(returnDate) < new Date(pickupDate)) {
+          Swal.fire({ icon: 'error', title: 'Invalid Dates', text: 'Return date cannot be earlier than pickup date!' });
+          return;
+      }
+  } else if (tripType === 'Hourly') {
+      if (!hours) {
+          Swal.fire({ icon: 'error', title: 'Missing Field', text: 'Please select the number of hours.' });
+          return;
+      }
   }
   
   Swal.fire({
@@ -866,6 +916,11 @@ document.getElementById('cabSearchForm').addEventListener('submit', function(e) 
               confirmButtonColor: '#133a25'
           }).then(() => {
               document.getElementById('cabSearchForm').reset();
+              
+              // Reset cab selects display
+              document.querySelectorAll('.cab-display').forEach(d => d.style.display = 'none');
+              document.querySelectorAll('.cab-input').forEach(i => i.style.color = '#212529');
+
               document.getElementById('pickupDate').innerText = 'Select Date';
               document.getElementById('pickupTime').innerText = 'Select Time';
               document.getElementById('returnDate').innerText = 'Select Date';

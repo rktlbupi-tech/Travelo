@@ -29,11 +29,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $children = intval($_POST['children'] ?? 0);
         $infants = intval($_POST['infants'] ?? 0);
         $tclass = $conn->real_escape_string($_POST['travel_class'] ?? 'Economy');
+        $tclass = $conn->real_escape_string($_POST['travel_class'] ?? 'Economy');
+        $phone = $conn->real_escape_string($_POST['phone'] ?? '');
         
         if ($from === $to && $from !== '') {
             $response = ['status' => 'error', 'message' => 'Origin and destination cannot be the same.'];
         } else {
-            $sql = "INSERT INTO flights (trip_type, from_city, to_city, depart_date, return_date, adults, children, infants, travel_class) VALUES ('$trip_type', '$from', '$to', '$depart_date', '$return_date', $adults, $children, $infants, '$tclass')";
+            $sql = "INSERT INTO flights (trip_type, from_city, to_city, depart_date, return_date, adults, children, infants, travel_class, phone) VALUES ('$trip_type', '$from', '$to', '$depart_date', '$return_date', $adults, $children, $infants, '$tclass', '$phone')";
             if ($conn->query($sql) === TRUE) {
                 $response = ['status' => 'success', 'message' => 'Flight Booking Request Sent!'];
             } else {
@@ -45,10 +47,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $check_in = $conn->real_escape_string($_POST['check_in'] ?? '');
         $search = $conn->real_escape_string($_POST['search'] ?? '');
         $accom = $conn->real_escape_string($_POST['accommodations'] ?? '');
+        $phone = $conn->real_escape_string($_POST['phone'] ?? '');
+        $hotel_id = intval($_POST['hotel_id'] ?? 0);
+        $status = $conn->real_escape_string($_POST['status'] ?? 'Checked');
         
-        $sql = "INSERT INTO hotels (check_in, hotel_search, accommodations) VALUES ('$check_in', '$search', '$accom')";
+        $sql = "INSERT INTO hotels (check_in, hotel_search, accommodations, phone, hotel_id, status) VALUES ('$check_in', '$search', '$accom', '$phone', $hotel_id, '$status')";
         if ($conn->query($sql) === TRUE) {
-            $response = ['status' => 'success', 'message' => 'Hotel Booking Request Sent!'];
+            $response = ['status' => 'success', 'message' => "Hotel Availability Checked!"];
         } else {
             $response = ['status' => 'error', 'message' => 'Error: ' . $conn->error];
         }
@@ -63,11 +68,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $return_date = $conn->real_escape_string($_POST['return_date'] ?? '');
         $return_time = $conn->real_escape_string($_POST['return_time'] ?? '');
         $hours = $conn->real_escape_string($_POST['hours'] ?? '');
+        $hours = $conn->real_escape_string($_POST['hours'] ?? '');
+        $phone = $conn->real_escape_string($_POST['phone'] ?? '');
         
         if ($from === $to && $from !== '' && $trip_type !== 'Hourly') {
             $response = ['status' => 'error', 'message' => 'Pickup and drop cities cannot be the same.'];
         } else {
-            $sql = "INSERT INTO cabs (trip_type, pickup_type, from_city, to_city, pickup_date, pickup_time, return_date, return_time, hours) VALUES ('$trip_type', '$pickup', '$from', '$to', '$pickup_date', '$pickup_time', '$return_date', '$return_time', '$hours')";
+            $sql = "INSERT INTO cabs (trip_type, pickup_type, from_city, to_city, pickup_date, pickup_time, return_date, return_time, hours, phone) VALUES ('$trip_type', '$pickup', '$from', '$to', '$pickup_date', '$pickup_time', '$return_date', '$return_time', '$hours', '$phone')";
             if ($conn->query($sql) === TRUE) {
                 $response = ['status' => 'success', 'message' => 'Cab Booking Request Sent!'];
             } else {

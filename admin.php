@@ -6,6 +6,39 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
     header('Location: login.php');
     exit;
 }
+
+// Add New Hotel logic
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add_hotel') {
+    $name = $conn->real_escape_string($_POST['name']);
+    $loc = $conn->real_escape_string($_POST['location']);
+    $price = $conn->real_escape_string($_POST['price']);
+    $accom = $conn->real_escape_string($_POST['accommodations']);
+    $desc = $conn->real_escape_string($_POST['description']);
+    $image = 'assets/images/tour-3-550x590.jpg'; // static placeholder image
+
+    $conn->query("INSERT INTO app_hotels (name, location, price, accommodations, image, description) VALUES ('$name', '$loc', '$price', '$accom', '$image', '$desc')");
+    header("Location: admin.php?success=Hotel+Added+Successfully");
+    exit;
+}
+
+// Toggle Hotel Availability
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'toggle_hotel') {
+    $hotel_id = (int)$_POST['hotel_id'];
+    $current_status = (int)$_POST['current_status'];
+    $new_status = $current_status ? 0 : 1;
+    $conn->query("UPDATE app_hotels SET availability=$new_status WHERE id=$hotel_id");
+    header("Location: admin.php?success=Availability+Updated");
+    exit;
+}
+
+// Update Hotel Dates
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_dates') {
+    $hotel_id = (int)$_POST['hotel_id'];
+    $dates = $conn->real_escape_string($_POST['available_dates']);
+    $conn->query("UPDATE app_hotels SET available_dates='$dates' WHERE id=$hotel_id");
+    header("Location: admin.php?success=Calendar+Dates+Updated");
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -273,6 +306,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
             <li><a href="#" class="nav-link active" data-target="flights"><i class="fas fa-plane-departure"></i> Flight Bookings</a></li>
             <li><a href="#" class="nav-link" data-target="cabs"><i class="fas fa-car-side"></i> Cab Bookings</a></li>
             <li><a href="#" class="nav-link" data-target="hotels"><i class="fas fa-hotel"></i> Hotel Bookings</a></li>
+            <li><a href="#" class="nav-link" data-target="manage-hotels"><i class="fas fa-building"></i> Manage Hotels</a></li>
             <li><a href="#" class="nav-link" data-target="contacts"><i class="fas fa-envelope-open-text"></i> Messages</a></li>
             <li><a href="index.html" target="_blank"><i class="fas fa-external-link-alt"></i> View Website</a></li>
         </ul>
@@ -364,7 +398,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Check-in Date</th><th>Search Destination</th><th>Accommodation Type</th><th>Requested On</th>
+                            <th>Check-in Date</th><th>Hotel</th><th>Phone</th><th>Status</th><th>Requested On</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -373,8 +407,9 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                         while($row = $res->fetch_assoc()) {
                             echo "<tr>";
                             echo "<td><strong>{$row['check_in']}</strong></td>";
-                            echo "<td>{$row['hotel_search']}</td>";
-                            echo "<td><span class='pill economy'>{$row['accommodations']}</span></td>";
+                            echo "<td>{$row['hotel_search']}<br><span class='pill economy'>{$row['accommodations']}</span></td>";
+                            echo "<td>{$row['phone']}</td>";
+                            echo "<td>{$row['status']}</td>";
                             echo "<td><span style='color:#95a5a6; font-size:12px;'>".date('M j, Y g:i A', strtotime($row['booking_date']))."</span></td>";
                             echo "</tr>";
                         }
@@ -406,6 +441,101 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                             echo "<td style='max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' title='".htmlspecialchars($row['message'])."'>{$row['message']}</td>";
                             echo "<td><span style='color:#95a5a6; font-size:12px;'>".date('M j, Y g:i A', strtotime($row['date_sent']))."</span></td>";
                             echo "</tr>";
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Manage Hotels Card -->
+        <div class="data-card" id="manage-hotels-card">
+            <div class="card-header">
+                <h4><i class="fas fa-building"></i> Manage Hotels Data</h4>
+            </div>
+            <div class="table-responsive" style="padding: 30px;">
+                <?php if (isset($_GET['success'])): ?>
+                    <div class="alert alert-success"><?php echo htmlspecialchars($_GET['success']); ?></div>
+                <?php endif; ?>
+
+                <h5>Add New Hotel</h5>
+                <form action="admin.php" method="POST" class="mb-5 row g-3">
+                    <input type="hidden" name="action" value="add_hotel">
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" name="name" placeholder="Hotel Name" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" name="location" placeholder="Location City" required>
+                    </div>
+                    <div class="col-md-2">
+                        <input type="number" class="form-control" name="price" placeholder="Price (INR)" required>
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-select" name="accommodations" required>
+                            <option value="">Accommodation</option>
+                            <option value="Classic Tent">Classic Tent</option>
+                            <option value="Forest Camping">Forest Camping</option>
+                            <option value="Small Trailer">Small Trailer</option>
+                            <option value="Tree House Tent">Tree House Tent</option>
+                            <option value="Tent Camping">Tent Camping</option>
+                            <option value="Couple Tent">Couple Tent</option>
+                        </select>
+                    </div>
+                    <div class="col-md-5">
+                        <textarea class="form-control" name="description" placeholder="Description" rows="1" required></textarea>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100" style="background-color: #F7921E; border:none; padding:10px;">Add Hotel</button>
+                    </div>
+                </form>
+
+                <hr>
+
+                <h5 class="mt-4">Existing Hotels Database</h5>
+                <table class="table mt-3">
+                    <thead>
+                        <tr>
+                            <th>Image</th><th>Name & Location</th><th>Details</th><th>Description</th><th>Availability</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $res = $conn->query("SELECT * FROM app_hotels ORDER BY id DESC");
+                        if ($res && $res->num_rows > 0) {
+                            while($row = $res->fetch_assoc()) {
+                                $avail_badge = $row['availability'] ? '<span class="badge bg-success">Available</span>' : '<span class="badge bg-danger">Hidden</span>';
+                                $btn_text = $row['availability'] ? 'Hide' : 'Show';
+                                $btn_class = $row['availability'] ? 'btn-outline-danger' : 'btn-outline-success';
+                                
+                                echo "<tr>";
+                                echo "<td><img src='{$row['image']}' alt='hotel' style='border-radius:6px; max-width:60px;'></td>";
+                                echo "<td><strong>{$row['name']}</strong><br><span style='font-size:12px;color:#7f8c8d;'>{$row['location']}</span></td>";
+                                echo "<td><span class='pill economy'>{$row['accommodations']}</span><br><strong>₹{$row['price']}</strong></td>";
+                                echo "<td style='font-size:13px; max-width:250px; line-height: 1.4;'>".htmlspecialchars($row['description'])."</td>";
+                                echo "<td>
+                                    {$avail_badge}
+                                    <form method='POST' style='margin-top:5px;'>
+                                        <input type='hidden' name='action' value='toggle_hotel'>
+                                        <input type='hidden' name='hotel_id' value='{$row['id']}'>
+                                        <input type='hidden' name='current_status' value='{$row['availability']}'>
+                                        <button type='submit' class='btn {$btn_class} btn-sm' style='font-size:11px; padding:2px 6px;'>Toggle {$btn_text}</button>
+                                    </form>
+                                    <hr style='margin:10px 0;'>
+                                    <form method='POST'>
+                                        <input type='hidden' name='action' value='update_dates'>
+                                        <input type='hidden' name='hotel_id' value='{$row['id']}'>
+                                        <label style='font-size:11px; color:#7f8c8d;'>Availability Calendar:</label>
+                                        <input type='text' name='available_dates' class='form-control form-control-sm flatpickr-multiple mb-1' placeholder='Pick Dates' value='{$row['available_dates']}' style='font-size:11px; background:#fff;'>
+                                        <div style='font-size:10px; color:#27ae60; margin-bottom:5px; max-height:40px; overflow:hidden;'>
+                                            <i class='fas fa-calendar-check'></i> Selected: " . (empty($row['available_dates']) ? 'None' : $row['available_dates']) . "
+                                        </div>
+                                        <button type='submit' class='btn btn-primary btn-sm w-100' style='font-size:11px; background:#F7921E; border:none;'>Save Calendar Dates</button>
+                                    </form>
+                                </td>";
+                                echo "</tr>";
+                            }
+                        } else {
+                            echo "<tr><td colspan='5'>No hotels found.</td></tr>";
                         }
                         ?>
                     </tbody>
