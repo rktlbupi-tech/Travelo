@@ -739,7 +739,19 @@
         const cities = [
             { city: "Delhi", code: "DEL", airport: "Indira Gandhi International Airport" },
             { city: "Mumbai", code: "BOM", airport: "Chhatrapati Shivaji International Airport" },
-            { city: "Bangalore", code: "BLR", airport: "Kempegowda International Airport" }
+            { city: "Bangalore", code: "BLR", airport: "Kempegowda International Airport" },
+            { city: "Chennai", code: "MAA", airport: "Chennai International Airport" },
+            { city: "Kolkata", code: "CCU", airport: "Netaji Subhas Chandra Bose International Airport" },
+            { city: "Hyderabad", code: "HYD", airport: "Rajiv Gandhi International Airport" },
+            { city: "Ahmedabad", code: "AMD", airport: "Sardar Vallabhbhai Patel International Airport" },
+            { city: "Pune", code: "PNQ", airport: "Pune Airport" },
+            { city: "Goa", code: "GOI", airport: "Dabolim Airport" },
+            { city: "Kochi", code: "COK", airport: "Cochin International Airport" },
+            { city: "Dubai", code: "DXB", airport: "Dubai International Airport" },
+            { city: "London", code: "LHR", airport: "Heathrow Airport" },
+            { city: "Singapore", code: "SIN", airport: "Changi Airport" },
+            { city: "Bangkok", code: "BKK", airport: "Suvarnabhumi Airport" },
+            { city: "New York", code: "JFK", airport: "John F. Kennedy International Airport" }
         ];
 
         function closeAllDropdowns() {
@@ -792,7 +804,13 @@
                     c.code.toLowerCase().includes(query) ||
                     c.airport.toLowerCase().includes(query)
                 );
-                showDropdown(filtered);
+
+                // If no matches are found, show all cities as suggestions
+                if (filtered.length === 0) {
+                    showDropdown(cities);
+                } else {
+                    showDropdown(filtered);
+                }
             });
 
             // Click display → edit again
@@ -919,60 +937,109 @@
                 }
             }
 
+            const fromMatch = from ? from.match(/\(([A-Z]{3})\)/) : null;
+            const toMatch = to ? to.match(/\(([A-Z]{3})\)/) : null;
+            const fromIata = fromMatch ? fromMatch[1] : from;
+            const toIata = toMatch ? toMatch[1] : to;
+
+            const dDate = new Date(departDate);
+            const year = dDate.getFullYear();
+            const month = dDate.getMonth() + 1;
+            const day = dDate.getDate();
+
             // Show loading
             Swal.fire({
-                title: 'Processing Booking...',
-                text: 'Please wait while we submit your request.',
+                title: 'Checking Availability...',
+                text: 'Please wait while we check flight schedules.',
                 allowOutsideClick: false,
                 didOpen: () => {
                     Swal.showLoading();
                 }
             });
 
-            fetch('submit.php', {
-                method: 'POST',
-                body: formData
-            })
+            const apiUrl = `https://api.flightapi.io/schedule/v2/69bb903f0c5c5d91caaeeb3c?mode=dep&iata=${fromIata}&year=${year}&month=${month}&day=${day}&page=1`;
+
+            fetch(apiUrl)
                 .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success!',
-                            text: data.message,
-                            confirmButtonColor: '#133a25'
-                        }).then(() => {
-                            document.getElementById('searchForm').reset();
-
-                            // Reset city selects display
-                            document.querySelectorAll('.city-display').forEach(d => d.style.display = 'none');
-                            document.querySelectorAll('.city-input').forEach(i => i.style.color = '#212529');
-
-                            adultCount = 1;
-                            childCount = 0;
-                            infantCount = 0;
-                            document.getElementById('adultCount').innerText = '1';
-                            document.getElementById('childCount').innerText = '0';
-                            document.getElementById('infantCount').innerText = '0';
-                            document.getElementById('hiddenAdults').value = '1';
-                            document.getElementById('hiddenChildren').value = '0';
-                            document.getElementById('hiddenInfants').value = '0';
-                            travelClass = 'Economy';
-                            updateTravellerDisplay();
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: data.message
+                .then(apiData => {
+                    let isAvailable = false;
+                    if (apiData && apiData.data && apiData.data.flights) {
+                        isAvailable = apiData.data.flights.some(flight => {
+                            return flight.airport && (flight.airport.fs === toIata || flight.airport.iata === toIata);
                         });
                     }
+
+                    if (!isAvailable) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Not Available',
+                            text: 'flight not available for this to from'
+                        });
+                        return;
+                    }
+
+                    // Show loading for booking
+                    Swal.fire({
+                        title: 'Processing Booking...',
+                        text: 'Please wait while we submit your request.',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    fetch('submit.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Success!',
+                                    text: data.message,
+                                    confirmButtonColor: '#133a25'
+                                }).then(() => {
+                                    document.getElementById('searchForm').reset();
+
+                                    // Reset city selects display
+                                    document.querySelectorAll('.city-display').forEach(d => d.style.display = 'none');
+                                    document.querySelectorAll('.city-input').forEach(i => i.style.color = '#212529');
+
+                                    adultCount = 1;
+                                    childCount = 0;
+                                    infantCount = 0;
+                                    document.getElementById('adultCount').innerText = '1';
+                                    document.getElementById('childCount').innerText = '0';
+                                    document.getElementById('infantCount').innerText = '0';
+                                    document.getElementById('hiddenAdults').value = '1';
+                                    document.getElementById('hiddenChildren').value = '0';
+                                    document.getElementById('hiddenInfants').value = '0';
+                                    travelClass = 'Economy';
+                                    updateTravellerDisplay();
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: data.message
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'System Error',
+                                text: 'Something went wrong. Please try again later.'
+                            });
+                        });
                 })
                 .catch(error => {
                     Swal.fire({
                         icon: 'error',
-                        title: 'System Error',
-                        text: 'Something went wrong. Please try again later.'
+                        title: 'API Error',
+                        text: 'Could not connect to flight schedule service. Please try again.'
                     });
                 });
         });
