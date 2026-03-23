@@ -23,8 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
 // Toggle Hotel Availability
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'toggle_hotel') {
-    $hotel_id = (int) $_POST['hotel_id'];
-    $current_status = (int) $_POST['current_status'];
+    $hotel_id = (int)$_POST['hotel_id'];
+    $current_status = (int)$_POST['current_status'];
     $new_status = $current_status ? 0 : 1;
     $conn->query("UPDATE app_hotels SET availability=$new_status WHERE id=$hotel_id");
     header("Location: admin.php?success=Availability+Updated");
@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
 // Update Hotel Dates
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_dates') {
-    $hotel_id = (int) $_POST['hotel_id'];
+    $hotel_id = (int)$_POST['hotel_id'];
     $dates = $conn->real_escape_string($_POST['available_dates']);
     $conn->query("UPDATE app_hotels SET available_dates='$dates' WHERE id=$hotel_id");
     header("Location: admin.php?success=Calendar+Dates+Updated");
@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Travelo Admin Dashboard</title>
+    <title>Travolo Admin Dashboard</title>
     <link rel="shortcut icon" href="assets/images/favicon.ico" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/fonts/fontawesome/css/all.min.css">
@@ -324,7 +324,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
-            <h3 style="color:white; font-weight:700; margin:0;"><span style="color:#F7921E;">T</span>ravelo</h3>
+            <h3 style="color:white; font-weight:700; margin:0;"><span style="color:#F7921E;">T</span>ravolo</h3>
             <span style="font-size: 12px; color: #7f8c8d;">Admin Panel</span>
         </div>
 
@@ -420,21 +420,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                     </thead>
                     <tbody>
                         <?php
-                        $res = $conn->query("SELECT * FROM flights ORDER BY id DESC LIMIT 50");
-                        while ($row = $res->fetch_assoc()) {
-                            $trip_class = ($row['trip_type'] == 'OneWay') ? 'pill' : 'pill transfer';
-                            $cab_class = strtolower($row['travel_class']) == 'business' ? 'pill business' : 'pill economy';
-                            echo "<tr>";
-                            echo "<td><span class='{$trip_class}'>{$row['trip_type']}</span></td>";
-                            echo "<td><strong>{$row['from_city']}</strong><br>to <strong>{$row['to_city']}</strong></td>";
-                            echo "<td>D: {$row['depart_date']}<br>R: {$row['return_date']}</td>";
-                            echo "<td>{$row['adults']}A, {$row['children']}C, {$row['infants']}I</td>";
-                            echo "<td><span class='{$cab_class}'>{$row['travel_class']}</span></td>";
-                            echo "<td><strong>{$row['phone']}</strong></td>";
-                            echo "<td><span style='color:#95a5a6; font-size:12px;'>" . date('M j, Y g:i A', strtotime($row['booking_date'])) . "</span></td>";
-                            echo "</tr>";
-                        }
-                        ?>
+$res = $conn->query("SELECT * FROM flights ORDER BY id DESC LIMIT 50");
+while ($row = $res->fetch_assoc()) {
+    $trip_class = ($row['trip_type'] == 'OneWay') ? 'pill' : 'pill transfer';
+    $cab_class = strtolower($row['travel_class']) == 'business' ? 'pill business' : 'pill economy';
+    echo "<tr>";
+    echo "<td><span class='{$trip_class}'>{$row['trip_type']}</span></td>";
+    echo "<td><strong>{$row['from_city']}</strong><br>to <strong>{$row['to_city']}</strong></td>";
+    echo "<td>D: {$row['depart_date']}<br>R: {$row['return_date']}</td>";
+    echo "<td>{$row['adults']}A, {$row['children']}C, {$row['infants']}I</td>";
+    echo "<td><span class='{$cab_class}'>{$row['travel_class']}</span></td>";
+    echo "<td><strong>{$row['phone']}</strong></td>";
+    echo "<td><span style='color:#95a5a6; font-size:12px;'>" . date('M j, Y g:i A', strtotime($row['booking_date'])) . "</span></td>";
+    echo "</tr>";
+}
+?>
                     </tbody>
                 </table>
             </div>
@@ -459,18 +459,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                     </thead>
                     <tbody>
                         <?php
-                        $res = $conn->query("SELECT * FROM cabs ORDER BY id DESC LIMIT 50");
-                        while ($row = $res->fetch_assoc()) {
-                            echo "<tr>";
-                            echo "<td><span class='pill'>{$row['trip_type']}</span><br><span style='font-size:12px; color:#7f8c8d;'>{$row['pickup_type']}</span></td>";
-                            echo "<td><strong>{$row['from_city']}</strong><br>to <strong>{$row['to_city']}</strong></td>";
-                            echo "<td>{$row['pickup_date']}<br>{$row['pickup_time']}</td>";
-                            echo "<td>{$row['return_date']} {$row['return_time']}<br>{$row['hours']}</td>";
-                            echo "<td><strong>{$row['phone']}</strong></td>";
-                            echo "<td><span style='color:#95a5a6; font-size:12px;'>" . date('M j, Y g:i A', strtotime($row['booking_date'])) . "</span></td>";
-                            echo "</tr>";
-                        }
-                        ?>
+$res = $conn->query("SELECT * FROM cabs ORDER BY id DESC LIMIT 50");
+while ($row = $res->fetch_assoc()) {
+    echo "<tr>";
+    echo "<td><span class='pill'>{$row['trip_type']}</span><br><span style='font-size:12px; color:#7f8c8d;'>{$row['pickup_type']}</span></td>";
+    echo "<td><strong>{$row['from_city']}</strong><br>to <strong>{$row['to_city']}</strong></td>";
+    echo "<td>{$row['pickup_date']}<br>{$row['pickup_time']}</td>";
+    echo "<td>{$row['return_date']} {$row['return_time']}<br>{$row['hours']}</td>";
+    echo "<td><strong>{$row['phone']}</strong></td>";
+    echo "<td><span style='color:#95a5a6; font-size:12px;'>" . date('M j, Y g:i A', strtotime($row['booking_date'])) . "</span></td>";
+    echo "</tr>";
+}
+?>
                     </tbody>
                 </table>
             </div>
@@ -513,17 +513,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                             </thead>
                             <tbody>
                                 <?php
-                                $res = $conn->query("SELECT * FROM hotels WHERE booking_type = 'Check' ORDER BY id DESC LIMIT 50");
-                                while ($row = $res->fetch_assoc()) {
-                                    echo "<tr>";
-                                    echo "<td><strong>{$row['check_in']}</strong></td>";
-                                    echo "<td>{$row['hotel_search']}</td>";
-                                    echo "<td>{$row['phone']}</td>";
-                                    echo "<td><span class='badge bg-light text-dark border'>{$row['status']}</span></td>";
-                                    echo "<td><span style='color:#95a5a6; font-size:12px;'>" . date('M j, g:i A', strtotime($row['booking_date'])) . "</span></td>";
-                                    echo "</tr>";
-                                }
-                                ?>
+$res = $conn->query("SELECT * FROM hotels WHERE booking_type = 'Check' ORDER BY id DESC LIMIT 50");
+while ($row = $res->fetch_assoc()) {
+    echo "<tr>";
+    echo "<td><strong>{$row['check_in']}</strong></td>";
+    echo "<td>{$row['hotel_search']}</td>";
+    echo "<td>{$row['phone']}</td>";
+    echo "<td><span class='badge bg-light text-dark border'>{$row['status']}</span></td>";
+    echo "<td><span style='color:#95a5a6; font-size:12px;'>" . date('M j, g:i A', strtotime($row['booking_date'])) . "</span></td>";
+    echo "</tr>";
+}
+?>
                             </tbody>
                         </table>
                     </div>
@@ -543,16 +543,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                             </thead>
                             <tbody>
                                 <?php
-                                $res = $conn->query("SELECT * FROM hotels WHERE booking_type = 'Booking' ORDER BY id DESC LIMIT 50");
-                                while ($row = $res->fetch_assoc()) {
-                                    echo "<tr>";
-                                    echo "<td><strong>{$row['user_name']}</strong></td>";
-                                    echo "<td>{$row['email']}<br>{$row['phone']}</td>";
-                                    echo "<td><strong>{$row['hotel_search']}</strong><br>{$row['check_in']}</td>";
-                                    echo "<td><span style='color:#95a5a6; font-size:12px;'>" . date('M j, g:i A', strtotime($row['booking_date'])) . "</span></td>";
-                                    echo "</tr>";
-                                }
-                                ?>
+$res = $conn->query("SELECT * FROM hotels WHERE booking_type = 'Booking' ORDER BY id DESC LIMIT 50");
+while ($row = $res->fetch_assoc()) {
+    echo "<tr>";
+    echo "<td><strong>{$row['user_name']}</strong></td>";
+    echo "<td>{$row['email']}<br>{$row['phone']}</td>";
+    echo "<td><strong>{$row['hotel_search']}</strong><br>{$row['check_in']}</td>";
+    echo "<td><span style='color:#95a5a6; font-size:12px;'>" . date('M j, g:i A', strtotime($row['booking_date'])) . "</span></td>";
+    echo "</tr>";
+}
+?>
                             </tbody>
                         </table>
                     </div>
@@ -577,16 +577,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                     </thead>
                     <tbody>
                         <?php
-                        $res = $conn->query("SELECT * FROM contact_messages ORDER BY id DESC LIMIT 50");
-                        while ($row = $res->fetch_assoc()) {
-                            echo "<tr>";
-                            echo "<td><strong>{$row['name']}</strong></td>";
-                            echo "<td><a href='mailto:{$row['email']}'>{$row['email']}</a><br>{$row['phone']}</td>";
-                            echo "<td style='max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' title='" . htmlspecialchars($row['message']) . "'>{$row['message']}</td>";
-                            echo "<td><span style='color:#95a5a6; font-size:12px;'>" . date('M j, Y g:i A', strtotime($row['date_sent'])) . "</span></td>";
-                            echo "</tr>";
-                        }
-                        ?>
+$res = $conn->query("SELECT * FROM contact_messages ORDER BY id DESC LIMIT 50");
+while ($row = $res->fetch_assoc()) {
+    echo "<tr>";
+    echo "<td><strong>{$row['name']}</strong></td>";
+    echo "<td><a href='mailto:{$row['email']}'>{$row['email']}</a><br>{$row['phone']}</td>";
+    echo "<td style='max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' title='" . htmlspecialchars($row['message']) . "'>{$row['message']}</td>";
+    echo "<td><span style='color:#95a5a6; font-size:12px;'>" . date('M j, Y g:i A', strtotime($row['date_sent'])) . "</span></td>";
+    echo "</tr>";
+}
+?>
                     </tbody>
                 </table>
             </div>
@@ -600,7 +600,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             <div class="table-responsive" style="padding: 30px;">
                 <?php if (isset($_GET['success'])): ?>
                     <div class="alert alert-success"><?php echo htmlspecialchars($_GET['success']); ?></div>
-                <?php endif; ?>
+                <?php
+endif; ?>
 
                 <h5>Add New Hotel</h5>
                 <form action="admin.php" method="POST" class="mb-5 row g-3">
@@ -649,29 +650,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                     </thead>
                     <tbody>
                         <?php
-                        $res = $conn->query("SELECT * FROM app_hotels ORDER BY id DESC");
-                        if ($res && $res->num_rows > 0) {
-                            while ($row = $res->fetch_assoc()) {
-                                $avail_badge = $row['availability'] ? '<span class="badge bg-success">Visible</span>' : '<span class="badge bg-danger">Hidden</span>';
+$res = $conn->query("SELECT * FROM app_hotels ORDER BY id DESC");
+if ($res && $res->num_rows > 0) {
+    while ($row = $res->fetch_assoc()) {
+        $avail_badge = $row['availability'] ? '<span class="badge bg-success">Visible</span>' : '<span class="badge bg-danger">Hidden</span>';
 
-                                echo "<tr>";
-                                echo "<td><img src='{$row['image']}' alt='hotel' style='border-radius:8px; width:70px; height:50px; object-fit:cover;'></td>";
-                                echo "<td>
+        echo "<tr>";
+        echo "<td><img src='{$row['image']}' alt='hotel' style='border-radius:8px; width:70px; height:50px; object-fit:cover;'></td>";
+        echo "<td>
                                         <div style='font-weight:600; font-size:15px;'>{$row['name']}</div>
                                         <div style='font-size:12px; color:#7f8c8d;'><i class='fas fa-map-marker-alt me-1'></i>{$row['location']} | ₹{$row['price']}</div>
                                       </td>";
-                                echo "<td>{$avail_badge}</td>";
-                                echo "<td>
+        echo "<td>{$avail_badge}</td>";
+        echo "<td>
                                         <a href='hotel-edit.php?id={$row['id']}' class='btn btn-outline-primary btn-sm' style='padding: 5px 15px;'>
                                             <i class='fas fa-edit me-1'></i> Manage
                                         </a>
                                       </td>";
-                                echo "</tr>";
-                            }
-                        } else {
-                            echo "<tr><td colspan='4' class='text-center py-4 text-muted'>No hotels found in database.</td></tr>";
-                        }
-                        ?>
+        echo "</tr>";
+    }
+}
+else {
+    echo "<tr><td colspan='4' class='text-center py-4 text-muted'>No hotels found in database.</td></tr>";
+}
+?>
                     </tbody>
                 </table>
             </div>
