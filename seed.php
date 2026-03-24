@@ -133,5 +133,5 @@ $contact_sql = "INSERT INTO contact_messages (name, email, phone, website, messa
 $conn->query($contact_sql);
 
 echo "<h3>Success! All tables cleared and seeded with fresh data.</h3>";
-echo "<a href='index.html'>Go to Homepage</a> | <a href='admin.php'>Go to Admin Panel</a>";
+echo "<a href='index.php'>Go to Homepage</a> | <a href='admin.php'>Go to Admin Panel</a>";
 ?>

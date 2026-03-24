@@ -6,7 +6,7 @@ $res = $conn->query("SELECT * FROM app_hotels WHERE id = $id AND availability = 
 $hotel = $res->fetch_assoc();
 
 if (!$hotel) {
-    header("Location: hotel.html");
+    header("Location: hotel.php");
     exit;
 }
 ?>
@@ -47,85 +47,8 @@ if (!$hotel) {
         </style>
     </head>
     <body>
-        <div class="preloader">
-            <div class="loader">
-                <div class="pre-shadow"></div>
-                <div class="pre-box"></div>
-            </div>
-        </div>
+<?php include 'navbar.php'; ?>
 
-        <header class="header-area header-three ">
-            <div class="header-top-bar bg-green ">
-                <div class="container">
-                    <div class="row align-items-center">   
-                        <div class="col-xl-6 col-lg-12">
-                            <div class="information-wrapper">
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <div class="single-info-item-two justify-content-start">
-                                            <div class="inner-info text-Start">
-                                                <div class="icon"><i class="fas fa-phone-alt"></i></div>
-                                                <div class="info2"><p><a href="tel:+919910516644">+91-9910516644</a></p></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="single-info-item-two justify-content-start">
-                                            <div class="inner-info">
-                                                <div class="icon"><i class="far fa-envelope"></i></div>
-                                                <div class="info"><p><a href="mailto:info@travolo.online">info@travolo.online</a></p></div>
-                                            </div>
-                                        </div>
-                                    </div>                                   
-                                </div>
-                            </div>
-                        </div>
-						<div class="col-xl-6 col-lg-12">
-							<div class="row align-items-center">
-                                <div class="col-lg-9 ">
-									<ul class="d-flex justify-content-end">
-										<li class="pe-3"><a href="index.html">Booking Now</a></li>
-										<li><a href="about.html">About Us</a></li>                                   
-									</ul>
-								</div>
-								<div class="col-lg-3">								
-									<div class="booking-item">
-										<div class="bk-item booking-user" id="currency">
-											<select class="wide"><option value="01">USD</option><option value="02">INR</option><option value="03">EUR</option></select>
-                                       </div>
-                                   </div>
-								</div>
-							</div>
-						</div>	
-                    </div>
-                </div>
-            </div>
-            <div class="header-navigation navigation-white">
-                <div class="nav-overlay"></div>
-                <div class="container">
-                    <div class="primary-menu black-bg px-0">
-                        <div class="site-brading ">
-                            <a href="index.html" class="brand-logo"><img src="assets/images/logo.jpg" width="150px" alt="Logo"></a>
-                        </div>
-                        <div class="nav-menu">                           
-                            <nav class="main-menu nav-right-item">
-                                <ul>
-                                    <li><a href="index.html">Home</a></li>
-                                    <li><a href="about.html">About Us</a></li>
-                                    <li><a href="flight-booking.html">Flight</a></li>
-                                    <li><a href="hotel.html">Hotel</a></li>
-                                    <li><a href="cab-booking.html">Cab</a></li>
-                                    <li><a href="contact.html">Contact</a></li>
-                                </ul>
-                            </nav>
-                        </div>
-                        <div class="nav-right-item">                       
-                            <div class="navbar-toggler"><span></span><span></span><span></span></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
 
         <section class="page-banner overlay pt-170 pb-170 bg_cover" style="background-image: url(assets/images/abt-bg.jpg);">
             <div class="container">
@@ -134,8 +57,8 @@ if (!$hotel) {
                         <div class="page-banner-content text-center text-white">
                             <h1 class="page-title text-white"><?php echo $hotel['name']; ?></h1>
                             <ul class="breadcrumb-link text-white">
-                                <li><a href="index.html">Home</a></li>
-                                <li><a href="hotel.html">Hotels</a></li>
+                                <li><a href="index.php">Home</a></li>
+                                <li><a href="hotel.php">Hotels</a></li>
                                 <li class="active"><?php echo $hotel['location']; ?></li>
                             </ul>
                         </div>
@@ -236,58 +159,8 @@ if (!$hotel) {
             </div>
         </div>
 
-        <footer class="main-footer black-bg2 pt-100">
-            <div class="container">
-                <div class="footer-widget-area pt-75 pb-30">
-                    <div class="row">
-                        <div class="col-lg-3 col-md-6">
-                            <div class="footer-widget about-company-widget mb-40">
-                                <div class="footer-content">
-                                    <a href="index.html" class="footer-logo"><img src="assets/images/logo-white.png" alt="Logo"></a>
-                                    <p class="pt-4">Bringing you the finest travel experiences across the globe.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-2 col-md-6">
-                            <div class="footer-widget service-nav-widget mb-40 pl-lg-20">
-                                <h4 class="widget-title text-white">Pages</h4>
-                                <ul class="footer-widget-nav">
-                                    <li><a href="about.html">About us</a></li>
-                                    <li><a href="hotel.html">Hotels</a></li>
-                                    <li><a href="contact.html">Contact</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-6">
-                            <div class="footer-widget footer-newsletter-widget mb-40 pl-lg-20">
-                                <h4 class="widget-title text-white">Newsletter</h4>
-                                <form>
-                                    <div class="form_group">
-                                        <input type="email" class="form_control" placeholder="Email Address" required>	
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="footer-copyright text-center py-4 border-top border-secondary">
-                    <p class="mb-0">Copyright @ 2025 <span style="color: #F7921E;">Travelo</span>. All Rights Reserved</p>
-                </div>
-            </div>
-        </footer>
+<?php include 'footer.php'; ?>
 
-        <a href="#" class="back-to-top" ><i class="far fa-angle-up"></i></a>
-
-        <!-- Jquery and Bootstrap JS -->
-        <script src="assets/vendor/jquery-3.6.0.min.js"></script>
-        <script src="assets/vendor/popper/popper.min.js"></script>
-        <script src="assets/vendor/bootstrap/js/bootstrap.min.js"></script>
-        <script src="assets/vendor/slick/slick.min.js"></script>
-        <script src="assets/vendor/magnific-popup/dist/jquery.magnific-popup.min.js"></script>
-        <script src="assets/vendor/nice-select/js/jquery.nice-select.min.js"></script>
-        <script src="assets/vendor/jquery-ui/jquery-ui.min.js"></script>
-        <script src="assets/vendor/wow.min.js"></script>
-        <script src="assets/js/theme.js"></script>
         
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

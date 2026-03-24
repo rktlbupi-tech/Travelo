@@ -337,7 +337,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                     Hotels</a></li>
             <li><a href="#" class="nav-link" data-target="contacts"><i class="fas fa-envelope-open-text"></i>
                     Messages</a></li>
-            <li><a href="index.html" target="_blank"><i class="fas fa-external-link-alt"></i> View Website</a></li>
+            <li><a href="index.php" target="_blank"><i class="fas fa-external-link-alt"></i> View Website</a></li>
         </ul>
 
         <div class="logout-wrapper">
