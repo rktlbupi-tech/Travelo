@@ -1104,6 +1104,12 @@
                             </div>
                         </div>
 
+                        <!-- EMAIL ADDRESS -->
+                        <div class="search-segment" id="emailSegment">
+                            <label class="segment-label">Email Address</label>
+                            <input type="email" name="email" class="fw-bold border-0 p-0 fs-5 w-100" placeholder="Enter Email" value="<?php echo htmlspecialchars($_SESSION['user_email'] ?? ''); ?>" required>
+                        </div>
+
                         <!-- MOBILE NUMBER -->
                         <div class="search-segment" id="mobileSegment">
                             <label class="segment-label">Mobile Number</label>

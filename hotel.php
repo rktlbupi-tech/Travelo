@@ -416,6 +416,11 @@
                     </div>
 
                     <div class="emt-search-item emt-search-item-medium">
+                        <span class="emt-label">Email Address</span>
+                        <input type="email" class="emt-input" name="email" placeholder="you@example.com" value="<?php echo htmlspecialchars($_SESSION['user_email'] ?? ''); ?>" required>
+                    </div>
+
+                    <div class="emt-search-item emt-search-item-medium">
                         <span class="emt-label">Mobile Number</span>
                         <input type="tel" class="emt-input" name="phone" placeholder="+91 1234567890" value="<?php echo htmlspecialchars($_SESSION['user_phone'] ?? ''); ?>" required>
                     </div>

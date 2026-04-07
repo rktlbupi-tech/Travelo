@@ -15,6 +15,9 @@ if (is_logged_in()) {
     <link rel="shortcut icon" href="assets/images/favicon.ico" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Social Login SDKs -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
     <style>
         :root {
             --primary-color: #133a25;
@@ -245,8 +248,8 @@ if (is_logged_in()) {
 
         <div id="phoneSection">
             <div class="login-header">
-                <h2>Welcome Back!</h2>
-                <p>Login to search more amazing tours.</p>
+                <h2>Welcome to Travelo</h2>
+                <p>Login to book your premium cab experience.</p>
             </div>
 
             <?php if (isset($_GET['msg']) && $_GET['msg'] == 'limit_reached'): ?>
@@ -258,14 +261,38 @@ if (is_logged_in()) {
 
             <form id="phoneForm">
                 <input type="hidden" name="action" value="send_otp">
+                
+                <div class="form-group-custom">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" id="userEmail" name="email" class="form-control-custom" placeholder="you@example.com" required>
+                    <i class="fas fa-envelope form-icon" style="top: 48px;"></i>
+                </div>
+
                 <div class="form-group-custom">
                     <label class="form-label">Phone Number</label>
                     <input type="tel" id="mobileNumber" name="phone" class="form-control-custom" placeholder="Enter 10 Digit Mobile" value="<?php echo htmlspecialchars($_GET['phone'] ?? ''); ?>" required pattern="[6-9][0-9]{9}" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '');" title="Please enter a valid 10-digit mobile number">
-                    <i class="fas fa-phone form-icon"></i>
+                    <i class="fas fa-phone form-icon" style="top: 48px;"></i>
                 </div>
-                <button type="submit" class="btn-premium" id="sendOtpBtn">
+
+                <button type="submit" class="btn-premium mb-4" id="sendOtpBtn">
                     Get OTP <i class="fas fa-paper-plane"></i>
                 </button>
+
+                <!-- Social Login Section -->
+                <div class="text-center mb-4">
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px;">
+                        <hr style="flex:1; border-color:#eee;">
+                        <span style="font-size:12px; color:#999; font-weight:700; text-transform:uppercase;">Or Continue With</span>
+                        <hr style="flex:1; border-color:#eee;">
+                    </div>
+                    
+                    <div class="d-flex gap-3 justify-content-center">
+                        <div id="googleBtn" class="shadow-sm"></div>
+                        <button type="button" onclick="loginFB()" class="btn btn-outline-light shadow-sm" style="width:40px; height:40px; border-radius:50%; border:1px solid #eee; display:flex; align-items:center; justify-content:center; padding:0; background:#1877F2; color:#fff;">
+                            <i class="fab fa-facebook-f"></i>
+                        </button>
+                    </div>
+                </div>
             </form>
         </div>
 
@@ -408,6 +435,111 @@ if (is_logged_in()) {
         })
         .catch(() => Swal.fire('Error', 'Verification failed', 'error'));
     });
+
+    // SOCIAL LOGIN LOGIC
+    // ==================
+    
+    // 1. Common Social Auth Handler
+    window.handleSocialAuth = function(data) {
+        Swal.fire({ title: 'Authenticating...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+        
+        const formData = new FormData();
+        formData.append('action', 'social_login');
+        formData.append('email', data.email);
+        formData.append('name', data.name);
+        formData.append('social_id', data.social_id);
+        formData.append('social_type', data.social_type);
+        if (data.phone) formData.append('phone', data.phone);
+
+        fetch('api/auth_handler.php', { method: 'POST', body: formData })
+        .then(res => res.json())
+        .then(res => {
+            Swal.close();
+            if (res.status === 'success') {
+                Swal.fire({ icon: 'success', title: 'Welcome!', text: 'Login successful', timer: 1500, showConfirmButton: false }).then(() => {
+                    const params = new URLSearchParams(window.location.search);
+                    window.location.href = params.get('return_url') || 'index.php';
+                });
+            } else if (res.status === 'require_phone') {
+                Swal.fire({
+                    title: 'One last thing!',
+                    text: 'Please enter your mobile number to complete your registration.',
+                    input: 'tel',
+                    inputPlaceholder: 'Enter 10 Digit Mobile',
+                    showCancelButton: true,
+                    confirmButtonColor: '#F7921E',
+                    preConfirm: (phone) => {
+                        if (!/^[6-9][0-9]{9}$/.test(phone)) {
+                            Swal.showValidationMessage('Invalid mobile number');
+                        }
+                        return phone;
+                    }
+                }).then((pResult) => {
+                    if (pResult.isConfirmed) {
+                        handleSocialAuth({ ...data, phone: pResult.value });
+                    }
+                });
+            } else {
+                Swal.fire('Error', res.message, 'error');
+            }
+        });
+    };
+
+    // 2. Google Login Callback
+    window.handleCredentialResponse = (response) => {
+        const base64Url = response.credential.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const payload = JSON.parse(window.atob(base64));
+        
+        handleSocialAuth({
+            email: payload.email,
+            name: payload.name,
+            social_id: payload.sub,
+            social_type: 'Google'
+        });
+    };
+
+    // 3. Facebook Login Function
+    window.loginFB = () => {
+        FB.login(function(response) {
+            if (response.status === 'connected') {
+                FB.api('/me', {fields: 'name,email'}, function(userData) {
+                    handleSocialAuth({
+                        email: userData.email,
+                        name: userData.name,
+                        social_id: userData.id,
+                        social_type: 'Facebook'
+                    });
+                });
+            }
+        }, {scope: 'public_profile,email'});
+    };
+
+    window.addEventListener('load', function() {
+        // Init Google
+        if (window.google) {
+            google.accounts.id.initialize({
+                client_id: "your_google_client_id_here.apps.googleusercontent.com", 
+                callback: handleCredentialResponse,
+                auto_select: false
+            });
+            google.accounts.id.renderButton(
+                document.getElementById("googleBtn"),
+                { theme: "outline", size: "large", shape: "pill", type: "icon" }
+            );
+        }
+
+        // Init Facebook
+        if (window.FB) {
+            FB.init({
+              appId      : 'your_fb_app_id_here',
+              cookie     : true,
+              xfbml      : true,
+              version    : 'v18.0'
+            });
+        }
+    });
+
 </script>
 
 </body>

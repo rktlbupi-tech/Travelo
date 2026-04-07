@@ -1010,8 +1010,9 @@ while ($row = $res->fetch_assoc()) {
                                     echo "<span class='text-muted italic small'>Not Specified</span>";
                                 }
                                 echo "</td>";
-                                echo "<td>
-                                        <div class='fw-bold'><i class='fas fa-phone-alt text-success me-1 small'></i> {$row['phone']}</div>
+                                 echo "<td>
+                                        <div class='fw-bold' style='font-size:13px;'><i class='fas fa-phone-alt text-success me-1 small'></i> {$row['phone']}</div>
+                                        <div class='small text-muted' style='font-size:11px;'><i class='fas fa-envelope me-1 small'></i> {$row['email']}</div>
                                       </td>";
                                 echo "<td class='text-end'><span style='color:#95a5a6; font-size:12px; font-weight:500;'>" . date('M j, g:i A', strtotime($row['booking_date'])) . "</span></td>";
                                 echo "</tr>";

@@ -4,15 +4,16 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Fetch additional user details if logged in
-if (isset($_SESSION['user_id']) && (!isset($_SESSION['user_name']) || !isset($_SESSION['user_email']))) {
+if (isset($_SESSION['user_id']) && (!isset($_SESSION['user_name']) || !isset($_SESSION['user_email']) || !isset($_SESSION['user_phone']))) {
     include_once 'db.php';
     if (isset($conn)) {
         $uid = $_SESSION['user_id'];
-        $uRes = $conn->query("SELECT name, email FROM users WHERE id = $uid");
+        $uRes = $conn->query("SELECT name, email, phone FROM users WHERE id = $uid");
         if ($uRes && $uRes->num_rows > 0) {
             $uData = $uRes->fetch_assoc();
             $_SESSION['user_name'] = $uData['name'];
             $_SESSION['user_email'] = $uData['email'];
+            $_SESSION['user_phone'] = $uData['phone'];
         }
     }
 }

@@ -58,6 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $to = isset($_POST['to']) ? $conn->real_escape_string($_POST['to']) : '';
         $depart_date = isset($_POST['depart_date']) ? $conn->real_escape_string($_POST['depart_date']) : '';
         $phone = $conn->real_escape_string($_POST['mobile'] ?? $_POST['phone'] ?? '');
+        if (empty($phone)) $phone = $_SESSION['user_phone'] ?? '';
         
         if (empty($from) || empty($to) || empty($depart_date) || empty($phone)) {
             $response = ['status' => 'error', 'message' => 'Required fields (From, To, Date, Mobile) are missing.'];
@@ -72,8 +73,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $children = intval($_POST['children'] ?? 0);
             $infants = intval($_POST['infants'] ?? 0);
             $tclass = $conn->real_escape_string($_POST['travel_class'] ?? 'Economy');
+            $uid = $_SESSION['user_id'] ?? 0;
+            $email = $_SESSION['user_email'] ?? $_POST['email'] ?? '';
             
-            $sql = "INSERT INTO flights (trip_type, from_city, to_city, depart_date, return_date, adults, children, infants, travel_class, phone) VALUES ('$trip_type', '$from', '$to', '$depart_date', '$return_date', $adults, $children, $infants, '$tclass', '$phone')";
+            $sql = "INSERT INTO flights (user_id, trip_type, from_city, to_city, depart_date, return_date, adults, children, infants, travel_class, phone, email) 
+                    VALUES ($uid, '$trip_type', '$from', '$to', '$depart_date', '$return_date', $adults, $children, $infants, '$tclass', '$phone', '$email')";
             if ($conn->query($sql) === TRUE) {
                 $response = ['status' => 'success', 'message' => 'Flight Booking Request Sent!'];
             } else {
@@ -85,6 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $from = isset($_POST['from']) ? $conn->real_escape_string($_POST['from']) : '';
         $to = isset($_POST['to']) ? $conn->real_escape_string($_POST['to']) : '';
         $mobile = isset($_POST['mobile']) ? $conn->real_escape_string($_POST['mobile']) : '';
+        if (empty($mobile)) $mobile = $_SESSION['user_phone'] ?? '';
         
         if (empty($from) || empty($to) || empty($mobile)) {
             $response = ['status' => 'error', 'message' => 'Please provide origin, destination and mobile.'];
@@ -97,9 +102,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $children = intval($_POST['children'] ?? 0);
             $infants = intval($_POST['infants'] ?? 0);
             $tclass = $conn->real_escape_string($_POST['travel_class'] ?? 'Economy');
+            $uid = $_SESSION['user_id'] ?? 0;
+            $email = $_SESSION['user_email'] ?? $_POST['email'] ?? '';
 
-            $sql = "INSERT INTO flight_searches (from_city, to_city, depart_date, trip_type, adults, children, infants, travel_class, mobile) 
-                    VALUES ('$from', '$to', '$depart_date', '$trip_type', $adults, $children, $infants, '$tclass', '$mobile')";
+            $sql = "INSERT INTO flight_searches (user_id, from_city, to_city, depart_date, trip_type, adults, children, infants, travel_class, mobile, email) 
+                    VALUES ($uid, '$from', '$to', '$depart_date', '$trip_type', $adults, $children, $infants, '$tclass', '$mobile', '$email')";
             if ($conn->query($sql) === TRUE) {
                 $response = ['status' => 'success', 'message' => 'Search Logged'];
             } else {
@@ -110,6 +117,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     else if ($type == "hotel") {
         $check_in = isset($_POST['check_in']) ? $conn->real_escape_string($_POST['check_in']) : '';
         $phone = isset($_POST['phone']) ? $conn->real_escape_string($_POST['phone']) : '';
+        if (empty($phone)) $phone = $_SESSION['user_phone'] ?? '';
         $user_name = isset($_POST['name']) ? $conn->real_escape_string($_POST['name']) : '';
         $email = isset($_POST['email']) ? $conn->real_escape_string($_POST['email']) : '';
         
@@ -128,9 +136,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $hotel_id = intval($_POST['hotel_id'] ?? 0);
             $status = $conn->real_escape_string($_POST['status'] ?? 'Checked');
             $b_type = $conn->real_escape_string($_POST['booking_type'] ?? 'Check');
+            $uid = $_SESSION['user_id'] ?? 0;
             
-            $sql = "INSERT INTO hotels (check_in, check_out, hotel_search, room_type, guests, price, phone, hotel_id, status, user_name, email, booking_type, booking_status) 
-                    VALUES ('$check_in', '$check_out', '$search', '$room_type', '$guests', $price, '$phone', $hotel_id, '$status', '$user_name', '$email', '$b_type', 'Requested')";
+            $sql = "INSERT INTO hotels (user_id, check_in, check_out, hotel_search, room_type, guests, price, phone, hotel_id, status, user_name, email, booking_type, booking_status) 
+                    VALUES ($uid, '$check_in', '$check_out', '$search', '$room_type', '$guests', $price, '$phone', $hotel_id, '$status', '$user_name', '$email', '$b_type', 'Requested')";
                     
             if ($conn->query($sql) === TRUE) {
                 if (isset($_SESSION['user_id'])) {
@@ -151,6 +160,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $from = isset($_POST['from']) ? $conn->real_escape_string($_POST['from']) : '';
         $pickup_date = isset($_POST['pickup_date']) ? $conn->real_escape_string($_POST['pickup_date']) : '';
         $phone = $conn->real_escape_string($_POST['mobile'] ?? $_POST['phone'] ?? '');
+        if (empty($phone)) $phone = $_SESSION['user_phone'] ?? '';
         
         if (empty($from) || empty($pickup_date) || empty($phone)) {
             $response = ['status' => 'error', 'message' => 'Source, Date, and Mobile number are mandatory.'];
@@ -168,7 +178,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($from === $to && $from !== '' && $trip_type !== 'Hourly') {
                 $response = ['status' => 'error', 'message' => 'Pickup and drop cities cannot be the same.'];
             } else {
-                $sql = "INSERT INTO cabs (trip_type, pickup_type, from_city, to_city, pickup_date, pickup_time, return_date, return_time, hours, phone) VALUES ('$trip_type', '$pickup', '$from', '$to', '$pickup_date', '$pickup_time', '$return_date', '$return_time', '$hours', '$phone')";
+                $uid = $_SESSION['user_id'] ?? 0;
+                $email = $_SESSION['user_email'] ?? '';
+                $sql = "INSERT INTO cabs (user_id, trip_type, pickup_type, from_city, to_city, pickup_date, pickup_time, return_date, return_time, hours, phone, email) 
+                        VALUES ($uid, '$trip_type', '$pickup', '$from', '$to', '$pickup_date', '$pickup_time', '$return_date', '$return_time', '$hours', '$phone', '$email')";
+                
                 if ($conn->query($sql) === TRUE) {
                     $response = ['status' => 'success', 'message' => 'Cab Booking Request Sent!'];
                 } else {
@@ -194,9 +208,12 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['action']) && $_GET['acti
     $trip = $conn->real_escape_string($_GET['tripType'] ?? '');
     $pickup = $conn->real_escape_string($_GET['pickup'] ?? 'One Way');
     $mobile = $conn->real_escape_string($_GET['mobile'] ?? '');
+    if (empty($mobile)) $mobile = $_SESSION['user_phone'] ?? '';
+    $uid = $_SESSION['user_id'] ?? 0;
+    $email = $_SESSION['user_email'] ?? '';
 
-    $sql = "INSERT INTO cabs (cab_id, trip_type, pickup_type, from_city, to_city, pickup_date, pickup_time, phone) 
-            VALUES ($cab_id, '$trip', '$pickup', '$from', '$to', '$date', '$time', '$mobile')";
+    $sql = "INSERT INTO cabs (user_id, cab_id, trip_type, pickup_type, from_city, to_city, pickup_date, pickup_time, phone, email) 
+            VALUES ($uid, $cab_id, '$trip', '$pickup', '$from', '$to', '$date', '$time', '$mobile', '$email')";
     
     $success = false;
     if ($conn->query($sql) === TRUE) {

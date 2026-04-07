@@ -7,9 +7,10 @@ $action = $_POST['action'] ?? '';
 
 if ($action === 'send_otp') {
     $phone = $_POST['phone'] ?? '';
+    $email = $_POST['email'] ?? '';
     
-    if (empty($phone)) {
-        echo json_encode(['status' => 'error', 'message' => 'Phone number is required']);
+    if (empty($phone) || empty($email)) {
+        echo json_encode(['status' => 'error', 'message' => 'Both Email and Phone number are mandatory']);
         exit;
     }
 
@@ -24,11 +25,11 @@ if ($action === 'send_otp') {
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
-        $stmt = $conn->prepare("UPDATE users SET otp = ?, otp_expiry = ? WHERE phone = ?");
-        $stmt->bind_param("sss", $otp, $expiry, $phone);
+        $stmt = $conn->prepare("UPDATE users SET email = ?, otp = ?, otp_expiry = ? WHERE phone = ?");
+        $stmt->bind_param("ssss", $email, $otp, $expiry, $phone);
     } else {
-        $stmt = $conn->prepare("INSERT INTO users (phone, otp, otp_expiry) VALUES (?, ?, ?)");
-        $stmt->bind_param("sss", $phone, $otp, $expiry);
+        $stmt = $conn->prepare("INSERT INTO users (phone, email, otp, otp_expiry) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("ssss", $phone, $email, $otp, $expiry);
     }
 
     if ($stmt->execute()) {
@@ -94,6 +95,79 @@ if ($action === 'verify_otp') {
     echo json_encode(['status' => 'success', 'message' => 'Logged in successfully']);
     $stmt->close();
     exit;
+}
+
+if ($action === 'social_login') {
+    $email = $_POST['email'] ?? '';
+    $name = $_POST['name'] ?? '';
+    $social_id = $_POST['social_id'] ?? '';
+    $social_type = $_POST['social_type'] ?? '';
+    $phone = $_POST['phone'] ?? '';
+
+    if (empty($email) || empty($social_id)) {
+        echo json_encode(['status' => 'error', 'message' => 'Missing essential social data']);
+        exit;
+    }
+
+    // 1. Check if user exists by email
+    $stmt = $conn->prepare("SELECT id, phone, name FROM users WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $user = $result->fetch_assoc();
+        $uid = $user['id'];
+        
+        // Update social info if missing
+        $stmt_upd = $conn->prepare("UPDATE users SET social_id = ?, social_type = ? WHERE id = ? AND social_id IS NULL");
+        $stmt_upd->bind_param("ssi", $social_id, $social_type, $uid);
+        $stmt_upd->execute();
+
+        // Check if phone is needed
+        $currentPhone = $user['phone'];
+        if (empty($currentPhone) && empty($phone)) {
+            echo json_encode(['status' => 'require_phone', 'message' => 'Phone number mandatory']);
+            exit;
+        }
+
+        // If newly provided phone, save it
+        if (empty($currentPhone) && !empty($phone)) {
+             $stmt_ph = $conn->prepare("UPDATE users SET phone = ? WHERE id = ?");
+             $stmt_ph->bind_param("si", $phone, $uid);
+             $stmt_ph->execute();
+             $currentPhone = $phone;
+        }
+
+        // LOGIN
+        $_SESSION['user_id'] = $uid;
+        $_SESSION['user_email'] = $email;
+        $_SESSION['user_phone'] = $currentPhone;
+        $_SESSION['user_name'] = $user['name'] ?? $name;
+
+        echo json_encode(['status' => 'success', 'message' => 'Social login successful']);
+        exit;
+    } else {
+        // 2. New User Registration via Social
+        if (empty($phone)) {
+            echo json_encode(['status' => 'require_phone', 'message' => 'New user requires phone number']);
+            exit;
+        }
+
+        $stmt_ins = $conn->prepare("INSERT INTO users (name, email, phone, social_id, social_type) VALUES (?, ?, ?, ?, ?)");
+        $stmt_ins->bind_param("sssss", $name, $email, $phone, $social_id, $social_type);
+        
+        if ($stmt_ins->execute()) {
+            $_SESSION['user_id'] = $conn->insert_id;
+            $_SESSION['user_email'] = $email;
+            $_SESSION['user_phone'] = $phone;
+            $_SESSION['user_name'] = $name;
+            echo json_encode(['status' => 'success', 'message' => 'Registration via social successful']);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Failed to create user: ' . $conn->error]);
+        }
+        exit;
+    }
 }
 
 echo json_encode(['status' => 'error', 'message' => 'Invalid action']);

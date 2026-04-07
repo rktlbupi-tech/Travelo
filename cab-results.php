@@ -8,8 +8,25 @@ $to = isset($_GET['to']) ? $_GET['to'] : 'Airport';
 $date = isset($_GET['date']) ? $_GET['date'] : date('Y-m-d');
 $time = isset($_GET['time']) ? $_GET['time'] : '12:00 PM';
 $tripType = isset($_GET['tripType']) ? $_GET['tripType'] : 'Airport Transfer';
-$mobile = isset($_GET['mobile']) ? $_GET['mobile'] : '';
+$mobile = $_SESSION['user_phone'] ?? ($_GET['mobile'] ?? '');
 $pickup_type = isset($_GET['pickup']) ? $_GET['pickup'] : 'One Way';
+
+// Serviceability Check
+$serviceable = false;
+$city_pack = null;
+if ($tripType === 'Airport Transfer') {
+    $q = $conn->query("SELECT * FROM cab_transfers WHERE (city LIKE '%$from%' OR city LIKE '%$to%' OR airport LIKE '%$from%' OR airport LIKE '%$to%') AND status = 1 LIMIT 1");
+    if ($q && $q->num_rows > 0) { $serviceable = true; $city_pack = $q->fetch_assoc(); }
+} elseif ($tripType === 'Outstation') {
+    $q = $conn->query("SELECT * FROM cab_outstation WHERE (city LIKE '%$from%' OR destinations LIKE '%$to%') AND status = 1 LIMIT 1");
+    if ($q && $q->num_rows > 0) { $serviceable = true; $city_pack = $q->fetch_assoc(); }
+} elseif ($tripType === 'Hourly') {
+    $q = $conn->query("SELECT * FROM cab_hourly WHERE (city LIKE '%$from%' OR location_tag LIKE '%$from%') AND status = 1 LIMIT 1");
+    if ($q && $q->num_rows > 0) { $serviceable = true; $city_pack = $q->fetch_assoc(); }
+} else {
+    // Basic city check if trip type is not specific
+    $serviceable = true; 
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -179,6 +196,23 @@ $pickup_type = isset($_GET['pickup']) ? $_GET['pickup'] : 'One Way';
 
         .book-now-premium:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0, 167, 157, 0.3); color: #fff; }
 
+        /* City Pack Banner */
+        .city-pack-banner {
+            background: #fff;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1.5px solid #eee;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+        }
+
+        .city-img-side { width: 30%; height: 180px; object-fit: cover; }
+        .city-info-side { padding: 30px; flex-grow: 1; }
+        .city-info-side h2 { font-size: 28px; font-weight: 800; color: var(--travolo-dark); margin-bottom: 5px; }
+        .city-info-side p { color: #777; margin-bottom: 0; font-size: 15px; }
+        .featured-badge { background: var(--travolo-orange); color: #fff; font-size: 10px; font-weight: 800; padding: 4px 12px; border-radius: 50px; text-transform: uppercase; margin-bottom: 15px; display: inline-block; }
+
         /* Mobile Specific */
         @media (max-width: 767px) {
             .car-result-card { flex-direction: column; text-align: center; gap: 20px; }
@@ -223,42 +257,68 @@ $pickup_type = isset($_GET['pickup']) ? $_GET['pickup'] : 'One Way';
 
                 <div class="col-12">
                 <?php
-                $price_col = 'base_price';
-                if ($tripType === 'Hourly') $price_col = 'hourly_price';
-                elseif ($tripType === 'Airport Transfer' || $to === 'Airport' || $from === 'Airport') $price_col = 'airport_price';
-                elseif ($tripType === 'Outstation') $price_col = 'outstation_price';
-
-                $cabs_res = $conn->query("SELECT *, $price_col as display_price FROM cab_inventory WHERE status = 1 ORDER BY display_price ASC");
-                if ($cabs_res && $cabs_res->num_rows > 0) {
-                    while ($cab = $cabs_res->fetch_assoc()) {
-                        $display_price = ($cab['display_price'] > 0) ? $cab['display_price'] : $cab['base_price'];
-                        $cat_class = 'category-' . strtolower($cab['category']);
+                if (!$serviceable) {
+                    echo "<div class='text-center py-5 bg-white border-dashed rounded-3 shadow-sm'>
+                            <i class='fas fa-map-marked-alt fa-3x mb-3 text-muted opacity-50'></i>
+                            <h4 class='fw-bold'>Service Not Available Yet</h4>
+                            <p class='text-muted px-5'>Sorry, but we currently do not provide $tripType services for <b>".htmlspecialchars($from)."</b>. Please try another city or contact us for personalized support.</p>
+                            <a href='cab-booking.php' class='btn btn-outline-primary rounded-pill mt-3'>Try Another City</a>
+                          </div>";
+                } else {
+                    // Show City Pack Info if available
+                    if ($city_pack) {
+                        $city_img = $city_pack['image_path'] ?? ($city_pack['thumbnail'] ?? 'assets/images/default-city.jpg');
+                        $city_name = $city_pack['city'] ?? $from;
+                        $pack_desc = $city_pack['airport'] ?? ($city_pack['destinations'] ?? ($city_pack['location_tag'] ?? 'Serving your route'));
                         ?>
-                        <div class="car-result-card wow fadeInUp">
-                            <div class="car-image-box">
-                                <img src="https://placehold.co/400x250/f4f7f6/133a25?text=<?php echo urlencode($cab['car_name']); ?>" alt="<?php echo htmlspecialchars($cab['car_name']); ?>">
-                            </div>
-                            <div class="car-detail-main">
-                                <span class="car-category <?php echo $cat_class; ?>"><?php echo htmlspecialchars($cab['category']); ?></span>
-                                <h3 class="car-name-title"><?php echo htmlspecialchars($cab['car_name']); ?></h3>
-                                <div class="car-features-icons">
-                                    <div class="feature-icon-item" title="Capacity"><i class="fas fa-users"></i> <?php echo $cab['capacity']; ?> People</div>
-                                    <div class="feature-icon-item" title="Luggage"><i class="fas fa-briefcase"></i> <?php echo $cab['luggage']; ?> Bags</div>
-                                    <div class="feature-icon-item"><i class="fas fa-snowflake"></i> AC</div>
-                                    <div class="feature-icon-item"><i class="fas fa-shield-alt"></i> Safe journey</div>
-                                </div>
-                                <div class="text-success small fw-bold"><i class="fas fa-check-circle me-1"></i> Refundable fare | Free Cancellation</div>
-                            </div>
-                            <div class="car-price-section">
-                                <div class="car-price-tag">₹<?php echo number_format($display_price); ?></div>
-                                <span class="car-price-unit"><?php echo ($tripType === 'Hourly') ? 'for 8 hrs / 80 km' : 'all inclusive fare'; ?></span>
-                                <button class="book-now-premium" onclick="bookCab(<?php echo $cab['id']; ?>)">Book Now</button>
+                        <div class="city-pack-banner d-none d-md-flex">
+                            <img src="<?php echo $city_img; ?>" class="city-img-side" alt="<?php echo $city_name; ?>">
+                            <div class="city-info-side">
+                                <span class="featured-badge">Standard Service Area</span>
+                                <h2>Premium Cabs in <?php echo $city_name; ?></h2>
+                                <p><i class="fas fa-check-circle text-success me-2"></i> Verified Chauffeurs | <?php echo $pack_desc; ?> | No hidden costs</p>
                             </div>
                         </div>
                         <?php
                     }
-                } else {
-                    echo "<div class='alert alert-info py-4 text-center'>No cabs available for this route currently. Please try another selection.</div>";
+
+                    $price_col = 'base_price';
+                    if ($tripType === 'Hourly') $price_col = 'hourly_price';
+                    elseif ($tripType === 'Airport Transfer' || $to === 'Airport' || $from === 'Airport') $price_col = 'airport_price';
+                    elseif ($tripType === 'Outstation') $price_col = 'outstation_price';
+
+                    $cabs_res = $conn->query("SELECT *, $price_col as display_price FROM cab_inventory WHERE status = 1 ORDER BY display_price ASC");
+                    if ($cabs_res && $cabs_res->num_rows > 0) {
+                        while ($cab = $cabs_res->fetch_assoc()) {
+                            $display_price = ($cab['display_price'] > 0) ? $cab['display_price'] : $cab['base_price'];
+                            $cat_class = 'category-' . strtolower($cab['category']);
+                            ?>
+                            <div class="car-result-card wow fadeInUp">
+                                <div class="car-image-box">
+                                    <img src="https://placehold.co/400x250/f4f7f6/133a25?text=<?php echo urlencode($cab['car_name']); ?>" alt="<?php echo htmlspecialchars($cab['car_name']); ?>">
+                                </div>
+                                <div class="car-detail-main">
+                                    <span class="car-category <?php echo $cat_class; ?>"><?php echo htmlspecialchars($cab['category']); ?></span>
+                                    <h3 class="car-name-title"><?php echo htmlspecialchars($cab['car_name']); ?></h3>
+                                    <div class="car-features-icons">
+                                        <div class="feature-icon-item" title="Capacity"><i class="fas fa-users"></i> <?php echo $cab['capacity']; ?> People</div>
+                                        <div class="feature-icon-item" title="Luggage"><i class="fas fa-briefcase"></i> <?php echo $cab['luggage']; ?> Bags</div>
+                                        <div class="feature-icon-item"><i class="fas fa-snowflake"></i> AC</div>
+                                        <div class="feature-icon-item"><i class="fas fa-shield-alt"></i> Safe journey</div>
+                                    </div>
+                                    <div class="text-success small fw-bold"><i class="fas fa-check-circle me-1"></i> Refundable fare | Free Cancellation</div>
+                                </div>
+                                <div class="car-price-section">
+                                    <div class="car-price-tag">₹<?php echo number_format($display_price); ?></div>
+                                    <span class="car-price-unit"><?php echo ($tripType === 'Hourly') ? 'for 8 hrs / 80 km' : 'all inclusive fare'; ?></span>
+                                    <button class="book-now-premium" onclick="bookCab(<?php echo $cab['id']; ?>)">Book Now</button>
+                                </div>
+                            </div>
+                            <?php
+                        }
+                    } else {
+                        echo "<div class='alert alert-info py-4 text-center'>No cabs available for this route currently. Please try another selection.</div>";
+                    }
                 }
                 ?>
                 </div>
@@ -270,6 +330,28 @@ $pickup_type = isset($_GET['pickup']) ? $_GET['pickup'] : 'One Way';
 
     <script>
         function bookCab(id) {
+            // Check if logged in via PHP embedded variable
+            const isLoggedIn = <?php echo is_logged_in() ? 'true' : 'false'; ?>;
+            
+            if (!isLoggedIn) {
+                Swal.fire({
+                    title: 'Login Required',
+                    text: 'Please login with your mobile and email to proceed with the booking.',
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonColor: '#00a79d',
+                    confirmButtonText: 'Login Now',
+                    cancelButtonText: 'Maybe Later'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Redirect to login with return_url and current search params to preserve context
+                        const currentUrl = encodeURIComponent(window.location.href);
+                        window.location.href = 'login-user.php?return_url=' + currentUrl;
+                    }
+                });
+                return;
+            }
+
             Swal.fire({
                 title: 'Confirm Booking',
                 text: 'Proceed to finalize your booking for this cab?',
