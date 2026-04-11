@@ -65,8 +65,13 @@
             border-right: none !important;
         }
 
-        .emt-search-item-large { flex: 2 !important; }
-        .emt-search-item-medium { flex: 1.5 !important; }
+        .emt-search-item-large {
+            flex: 2 !important;
+        }
+
+        .emt-search-item-medium {
+            flex: 1.5 !important;
+        }
 
         #hotelResultsContainer {
             display: flex !important;
@@ -91,13 +96,16 @@
             background: #fff !important;
             overflow: hidden !important;
             transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03) !important; /* Very Light Shadow */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03) !important;
+            /* Very Light Shadow */
         }
-        
+
         .single-place-item:hover {
             transform: translateY(-8px) !important;
-            border-color: #00a79d !important; /* Teal Hover */
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important; /* Slightly more on hover */
+            border-color: #00a79d !important;
+            /* Teal Hover */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
+            /* Slightly more on hover */
         }
 
         .place-content {
@@ -141,11 +149,12 @@
 
         .place-content p.description {
             display: -webkit-box !important;
-            -webkit-line-clamp: 2 !important; /* Truncate to 2 Rows */
+            -webkit-line-clamp: 2 !important;
+            /* Truncate to 2 Rows */
             -webkit-box-orient: vertical !important;
             overflow: hidden !important;
             min-height: 3.2em !important;
-            height: 3.2em !important; 
+            height: 3.2em !important;
             margin-bottom: 20px !important;
             font-size: 14px !important;
             line-height: 1.6 !important;
@@ -158,27 +167,27 @@
             padding-top: 15px !important;
             border-top: 1px solid #f0f0f0 !important;
         }
-        
+
         .single-place-item .place-img img {
             height: 220px !important;
             object-fit: cover !important;
         }
 
         .emt-label {
-            font-size: 12px !important;
+            font-size: 11px !important;
             color: #888 !important;
-            margin-bottom: 3px !important;
+            margin-bottom: 2px !important;
             display: block !important;
-            font-weight: 700 !important;
+            font-weight: 600 !important;
             text-transform: uppercase !important;
             letter-spacing: 0.5px !important;
             font-family: 'Prompt', sans-serif !important;
         }
 
         .emt-input {
-            font-size: 17px !important;
-            font-weight: 700 !important;
-            color: #000 !important;
+            font-size: 14px !important;
+            font-weight: 300 !important;
+            color: #333 !important;
             border: none !important;
             padding: 0 !important;
             background: transparent !important;
@@ -351,14 +360,17 @@
                 flex-direction: column !important;
                 margin-top: 0 !important;
             }
+
             .emt-search-item {
                 border-right: none !important;
                 border-bottom: 1px solid #efefef !important;
             }
+
             .emt-search-btn-wrapper {
                 border-radius: 0 0 10px 10px !important;
                 padding: 15px !important;
             }
+
             .emt-rooms-guests-popover {
                 width: 100% !important;
                 right: 0 !important;
@@ -368,8 +380,8 @@
 </head>
 
 <body>
-<?php include 'navbar.php'; ?>
-    
+    <?php include 'navbar.php'; ?>
+
 
 
     <!--====== Start Breadcrumb Section ======-->
@@ -393,7 +405,8 @@
     <section class="booking-form-section pb-100" style="padding-top: 0;">
         <div class="container">
             <div class="emt-search-container">
-                <form id="hotelSearchForm" action="submit.php" method="POST" class="d-flex w-100 flex-wrap flex-lg-nowrap" style="margin:0; padding:0;">
+                <form id="hotelSearchForm" action="submit.php" method="POST"
+                    class="d-flex w-100 flex-wrap flex-lg-nowrap" style="margin:0; padding:0;">
                     <input type="hidden" name="form_type" value="hotel">
                     <input type="hidden" name="hotel_id" id="selectedHotelId" value="0">
                     <input type="hidden" name="status" id="checkStatus" value="Checked">
@@ -401,28 +414,33 @@
 
                     <div class="emt-search-item emt-search-item-large">
                         <span class="emt-label">City / Hotel</span>
-                        <input type="text" class="emt-input" name="search" placeholder="Where are you going?" list="hotelList" required autocomplete="off">
+                        <input type="text" class="emt-input" name="search" placeholder="Where are you going?"
+                            list="hotelList" required autocomplete="off">
                         <datalist id="hotelList"></datalist>
                     </div>
 
                     <div class="emt-search-item">
                         <span class="emt-label">Check-In</span>
-                        <input type="text" class="emt-input datepicker" name="check_in" id="check_in" placeholder="Select Date" required readonly style="background:transparent;">
+                        <input type="text" class="emt-input datepicker" name="check_in" id="check_in"
+                            placeholder="Select Date" required readonly style="background:transparent;">
                     </div>
 
                     <div class="emt-search-item">
                         <span class="emt-label">Check-Out</span>
-                        <input type="text" class="emt-input datepicker" name="check_out" id="check_out" placeholder="Select Date" required readonly style="background:transparent;">
+                        <input type="text" class="emt-input datepicker" name="check_out" id="check_out"
+                            placeholder="Select Date" required readonly style="background:transparent;">
                     </div>
 
                     <div class="emt-search-item emt-search-item-medium">
                         <span class="emt-label">Email Address</span>
-                        <input type="email" class="emt-input" name="email" placeholder="you@example.com" value="<?php echo htmlspecialchars($_SESSION['user_email'] ?? ''); ?>" required>
+                        <input type="email" class="emt-input" name="email" placeholder="you@example.com"
+                            value="<?php echo htmlspecialchars($_SESSION['user_email'] ?? ''); ?>" required>
                     </div>
 
                     <div class="emt-search-item emt-search-item-medium">
                         <span class="emt-label">Mobile Number</span>
-                        <input type="tel" class="emt-input" name="phone" placeholder="+91 1234567890" value="<?php echo htmlspecialchars($_SESSION['user_phone'] ?? ''); ?>" required>
+                        <input type="tel" class="emt-input" name="phone" placeholder="+91 1234567890"
+                            value="<?php echo htmlspecialchars($_SESSION['user_phone'] ?? ''); ?>" required>
                     </div>
 
                     <div class="emt-search-item emt-search-item-large" id="roomsGuestsTrigger" style="cursor:pointer;">
@@ -542,8 +560,8 @@
 
 
 
-<?php include 'footer.php'; ?>
-    
+    <?php include 'footer.php'; ?>
+
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
@@ -561,13 +579,13 @@
         const accommodationsInput = document.getElementById('accommodationsInput');
 
         // Toggle Popover
-        roomsGuestsTrigger.addEventListener('click', function(e) {
+        roomsGuestsTrigger.addEventListener('click', function (e) {
             if (e.target.closest('.emt-rooms-guests-popover')) return;
             roomsGuestsPopover.classList.toggle('active');
         });
 
         // Close on click outside
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             if (!roomsGuestsTrigger.contains(e.target)) {
                 roomsGuestsPopover.classList.remove('active');
             }
@@ -611,17 +629,17 @@
             updateSummary();
         }
 
-        window.updateGuest = function(roomIndex, type, delta) {
+        window.updateGuest = function (roomIndex, type, delta) {
             rooms[roomIndex][type] += delta;
             updateRoomsUI();
         };
 
-        window.removeRoom = function(roomIndex) {
+        window.removeRoom = function (roomIndex) {
             rooms.splice(roomIndex, 1);
             updateRoomsUI();
         };
 
-        addRoomBtn.addEventListener('click', function() {
+        addRoomBtn.addEventListener('click', function () {
             if (rooms.length < 5) {
                 rooms.push({ id: Date.now(), adults: 2, children: 0 });
                 updateRoomsUI();
@@ -630,7 +648,7 @@
             }
         });
 
-        doneBtn.addEventListener('click', function() {
+        doneBtn.addEventListener('click', function () {
             roomsGuestsPopover.classList.remove('active');
         });
 
@@ -710,18 +728,18 @@
                 .then(data => {
                     if (data.status === 'success') {
                         Swal.fire({ icon: 'success', title: 'Saved!', text: data.message, confirmButtonColor: '#F7921E' })
-                            .then(() => { 
+                            .then(() => {
                                 // Reset form and summary
-                                form.reset(); 
+                                form.reset();
                                 rooms = [{ id: 1, adults: 2, children: 0 }];
                                 updateRoomsUI();
                             });
                     } else {
                         if (data.redirect) {
                             Swal.fire({ icon: 'warning', title: 'Login Required', text: data.message, confirmButtonColor: '#F7921E' })
-                                .then(() => { 
+                                .then(() => {
                                     const sep = data.redirect.includes('?') ? '&' : '?';
-                                    window.location.href = data.redirect + sep + "return_url=" + encodeURIComponent(window.location.href); 
+                                    window.location.href = data.redirect + sep + "return_url=" + encodeURIComponent(window.location.href);
                                 });
                         } else {
                             Swal.fire({ icon: 'error', title: 'Oops...', text: data.message });
@@ -740,26 +758,29 @@
         const itemsPerPage = 6;
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Force datepicker to use YYYY-MM-DD
+            // Robust Datepicker Setup
             if ($.fn.datepicker) {
                 $(".datepicker").datepicker({
                     dateFormat: "yy-mm-dd",
                     minDate: 0,
-                    onSelect: function(selectedDate) {
+                    changeMonth: true,
+                    changeYear: true,
+                    onSelect: function (selectedDate) {
                         if (this.id === 'check_in') {
-                             var date = $(this).datepicker('getDate');
-                             date.setDate(date.getDate() + 1);
-                             $('#check_out').datepicker('option', 'minDate', date);
+                            var date = $(this).datepicker('getDate');
+                            date.setDate(date.getDate() + 1);
+                            $('#check_out').datepicker('option', 'minDate', date);
                         }
                     }
                 });
-                // Initialize defaults
-                const todayStr = new Date().toISOString().split('T')[0];
-                const tomorrow = new Date();
-                tomorrow.setDate(tomorrow.getDate() + 1);
-                const tomorrowStr = tomorrow.toISOString().split('T')[0];
-                $('#check_in').datepicker('setDate', todayStr);
-                $('#check_out').datepicker('setDate', tomorrowStr);
+                
+                // Initialize Today & Tomorrow
+                let today = new Date();
+                let tomorrow = new Date();
+                tomorrow.setDate(today.getDate() + 1);
+                
+                $('#check_in').datepicker('setDate', today);
+                $('#check_out').datepicker('setDate', tomorrow);
             }
 
             fetch('get_hotels.php')
@@ -823,8 +844,9 @@
                 const checkOut = document.getElementById('check_out').value;
                 const roomsVal = document.getElementById('roomsGuestsDisplay').innerText;
                 const mobile = document.querySelector('input[name="phone"]').value;
-                
-                const searchParams = `&checkin=${checkIn}&checkout=${checkOut}&rooms=${encodeURIComponent(roomsVal)}&mobile=${mobile}`;
+                const email = document.querySelector('input[name="email"]').value;
+
+                const searchParams = `&checkin=${checkIn}&checkout=${checkOut}&rooms=${encodeURIComponent(roomsVal)}&mobile=${mobile}&email=${email}`;
                 const detailUrl = `hotel-details.php?id=${hotel.id}${searchParams}`;
 
                 htmlString += `

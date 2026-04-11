@@ -1404,13 +1404,12 @@ include_once 'auth.php';
                                 </div>
                             </div>
 
-                            <!-- Email Address -->
                             <div class="col-lg-3 col-md-6">
                                 <div class="form-group-custom">
                                     <label>Email Address</label>
                                     <div class="input-with-icon">
                                         <i class="fas fa-envelope"></i>
-                                        <input type="email" name="email" class="form-control" placeholder="you@example.com" value="<?php echo htmlspecialchars($_SESSION['user_email'] ?? ''); ?>" required>
+                                        <input type="email" name="email" class="form-control" placeholder="you@example.com" value="<?php echo htmlspecialchars($_SESSION['user_email'] ?? $_GET['email'] ?? ''); ?>" required>
                                     </div>
                                 </div>
                             </div>
@@ -1421,7 +1420,7 @@ include_once 'auth.php';
                                     <label>Mobile Number</label>
                                     <div class="input-with-icon">
                                         <i class="fas fa-phone-alt"></i>
-                                        <input type="tel" name="mobile" class="form-control" placeholder="10-digit number" value="<?php echo htmlspecialchars($_SESSION['user_phone'] ?? ''); ?>" required pattern="[0-9]{10}" maxlength="10">
+                                        <input type="tel" name="mobile" class="form-control" placeholder="10-digit number" value="<?php echo htmlspecialchars($_SESSION['user_phone'] ?? $_GET['mobile'] ?? ''); ?>" required pattern="[0-9]{10}" maxlength="10">
                                     </div>
                                 </div>
                             </div>
@@ -1981,6 +1980,32 @@ include_once 'auth.php';
                             { breakpoint: 768, settings: { slidesToShow: 1 }}
                         ]
                     });
+                }
+                
+                // ===== REFINED DATE INITIALIZATION =====
+                const todayVal = new Date().toISOString().split('T')[0];
+                const pickupInput = document.getElementById('pickupDateInput');
+                const returnInput = document.getElementById('returnDateInput');
+                
+                if (pickupInput) {
+                    if (!pickupInput.value || pickupInput.value.includes('2031')) {
+                        pickupInput.value = todayVal;
+                        document.getElementById('hiddenPickupDate').value = todayVal;
+                        document.getElementById('selectedPickupDate').innerText = todayVal;
+                    }
+                    pickupInput.min = todayVal;
+                }
+
+                if (returnInput) {
+                    if (!returnInput.value || returnInput.value.includes('2031')) {
+                        const tomorrow = new Date();
+                        tomorrow.setDate(tomorrow.getDate() + 1);
+                        const tomVal = tomorrow.toISOString().split('T')[0];
+                        returnInput.value = tomVal;
+                        document.getElementById('hiddenReturnDate').value = tomVal;
+                        document.getElementById('selectedReturnDate').innerText = tomVal;
+                    }
+                    returnInput.min = pickupInput ? pickupInput.value : todayVal;
                 }
             });
         </script>

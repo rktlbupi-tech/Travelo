@@ -16,17 +16,7 @@
 </div><!--====== Search From ======-->
 
 <!--====== Start Header ======-->
-<style>
-    .main-menu ul li a {
-        font-size: 16px !important;
-        font-weight: 500 !important;
-        text-transform: capitalize !important;
-        letter-spacing: 0px !important;
-    }
-    .header-navigation .primary-menu .main-menu ul li.menu-item {
-        margin-right: 25px !important;
-    }
-</style>
+<!-- Custom Navigation Styling moved to style.css for better maintenance -->
 <header class="header-area header-three ">
     <!--====== Header Top Bar ======-->
     <div class="header-top-bar bg-green ">
@@ -119,7 +109,8 @@
                             <li class="menu-item has-children"><a href="cab-booking.php">Cab</a></li>
                             <li class="menu-item has-children"><a href="contact.php">Contact</a></li>
                             <?php if (is_logged_in()): ?>
-                                <li class="menu-item"><a href="logout.php" class="text-danger"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                                <li class="menu-item"><a href="logout.php" class="text-danger"><i
+                                            class="fas fa-sign-out-alt"></i> Logout</a></li>
                             <?php else: ?>
                                 <li class="menu-item"><a href="login-user.php"><i class="fas fa-user"></i> Login</a></li>
                             <?php endif; ?>

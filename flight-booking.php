@@ -1107,13 +1107,13 @@
                         <!-- EMAIL ADDRESS -->
                         <div class="search-segment" id="emailSegment">
                             <label class="segment-label">Email Address</label>
-                            <input type="email" name="email" class="fw-bold border-0 p-0 fs-5 w-100" placeholder="Enter Email" value="<?php echo htmlspecialchars($_SESSION['user_email'] ?? ''); ?>" required>
+                            <input type="email" name="email" class="fw-bold border-0 p-0 fs-5 w-100" placeholder="Enter Email" value="<?php echo htmlspecialchars($_SESSION['user_email'] ?? $_GET['email'] ?? ''); ?>" required>
                         </div>
 
                         <!-- MOBILE NUMBER -->
                         <div class="search-segment" id="mobileSegment">
                             <label class="segment-label">Mobile Number</label>
-                            <input type="tel" name="mobile" class="fw-bold border-0 p-0 fs-5 w-100" placeholder="Enter Mobile No" value="<?php echo htmlspecialchars($_SESSION['user_phone'] ?? ''); ?>" required pattern="[6-9][0-9]{9}" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '');" title="Please enter a valid 10-digit mobile number">
+                            <input type="tel" name="mobile" class="fw-bold border-0 p-0 fs-5 w-100" placeholder="Enter Mobile No" value="<?php echo htmlspecialchars($_SESSION['user_phone'] ?? $_GET['mobile'] ?? ''); ?>" required pattern="[6-9][0-9]{9}" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '');" title="Please enter a valid 10-digit mobile number">
                         </div>
 
                         <!-- SEARCH BTN -->
@@ -1731,11 +1731,37 @@ else {
             });
         });
 
-        // Init today
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('departDateInput').value = today;
-        document.getElementById('departDateInput').min   = today;
-        updateDateDisplay('depart');
+        // ===== DATE PICKER INITIALIZATION =====
+        function initFlightDates() {
+            const departInput = document.getElementById('departDateInput');
+            const returnInput = document.getElementById('returnDateInput');
+            
+            // Set Today
+            let today = new Date();
+            let todayStr = today.toISOString().split('T')[0];
+            
+            // Default to today if empty or set to weird 2031 bug
+            if (!departInput.value || departInput.value.includes('2031')) {
+                departInput.value = todayStr;
+            }
+            departInput.min = todayStr;
+            
+            // Sync displays
+            updateDateDisplay('depart');
+            
+            if (document.getElementById('roundTrip').checked) {
+                if (!returnInput.value || returnInput.value.includes('2031')) {
+                    let tomorrow = new Date();
+                    tomorrow.setDate(today.getDate() + 1);
+                    returnInput.value = tomorrow.toISOString().split('T')[0];
+                }
+                returnInput.min = departInput.value;
+                updateDateDisplay('return');
+            }
+        }
+
+        // Call on load
+        document.addEventListener('DOMContentLoaded', initFlightDates);
 
         // ===== Traveller Dropdown (position:fixed to escape overflow) =====
         let adultCount  = 1, childCount = 0, infantCount = 0, travelClass = 'Economy';
